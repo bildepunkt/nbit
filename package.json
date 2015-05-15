@@ -1,0 +1,15 @@
+{
+  "name": "nBit",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "node_modules/.bin/browserify -t coffeeify --extension=\".coffee\" main.coffee > out/main.js"
+  },
+  "author": "Chris Peters",
+  "license": "ISC",
+  "devDependencies": {
+    "browserify": "^10.2.0",
+    "coffeeify": "^1.1.0"
+  }
+}
