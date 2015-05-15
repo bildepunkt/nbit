@@ -1,5 +1,5 @@
-Foo = require './src/foo'
+Draw = require './src/draw'
 
-foo = new Foo
+draw = new Draw 'das el'
 
-console.log(foo.bar())
+console.log(draw.render())
