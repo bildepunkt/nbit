@@ -4,7 +4,7 @@ module.exports = {
     height: 640,
     pxSize: 16,
     gap: 4,
-    gapColor: '#FFF',
+    gapColor: '#EEE',
     barsColor: '#444'
 };
 },{}],2:[function(require,module,exports){
@@ -296,6 +296,31 @@ Draw = (function() {
     this.context = context;
   }
 
+  Draw.prototype.clear = function() {
+    return this.context.clearRect(0, 0, config.width, config.height);
+  };
+
+  Draw.prototype.fill = function(color) {
+    var halfGap, hasGap, i, j, ref, ref1, size, x, xlen, y, ylen;
+    hasGap = config.gap > 0;
+    this.context.save();
+    this.context.fillStyle = hasGap ? config.gapColor : color;
+    this.context.fillRect(0, 0, config.width, config.height);
+    if (hasGap) {
+      xlen = config.width / config.gap;
+      ylen = config.height / config.gap;
+      size = config.pxSize;
+      halfGap = Math.floor(config.gap / 2);
+      this.context.fillStyle = color;
+      for (y = i = 0, ref = xlen; 0 <= ref ? i <= ref : i >= ref; y = 0 <= ref ? ++i : --i) {
+        for (x = j = 0, ref1 = ylen; 0 <= ref1 ? j <= ref1 : j >= ref1; x = 0 <= ref1 ? ++j : --j) {
+          this.context.fillRect(size * x + halfGap, size * y + halfGap, size - halfGap, size - halfGap);
+        }
+      }
+    }
+    return this.context.restore();
+  };
+
   Draw.prototype.render = function(entity) {
     var gap, halfGap, i, j, legend, len, len1, map, mapx, mapy, size, x, y;
     size = config.pxSize;
@@ -303,6 +328,7 @@ Draw = (function() {
     map = entity.map;
     legend = entity.legend;
     halfGap = Math.floor(gap / 2);
+    this.context.save();
     this.context.translate(entity.x, entity.y);
     for (y = i = 0, len = map.length; i < len; y = ++i) {
       mapy = map[y];
@@ -325,7 +351,7 @@ module.exports = Draw;
 
 
 },{"../config":1}],6:[function(require,module,exports){
-var Bitmap, Dom, Draw, bitmap, bm, dom, draw, sprite;
+var Bitmap, Dom, Draw, bitmap, dom, draw, sprite;
 
 Draw = require('./src/draw');
 
@@ -339,30 +365,17 @@ draw = new Draw(dom.getContext());
 
 bitmap = new Bitmap;
 
-bm = bitmap.fromPoints([
-  {
-    x: 0,
-    y: 0
-  }, {
-    x: 4,
-    y: 4
-  }, {
-    x: 8,
-    y: 0
-  }, {
-    x: 12,
-    y: 4
-  }
-]);
-
 sprite = {
   x: 0,
   y: 0,
-  map: bm,
+  map: [[1, 1, 1, 1], [1, 2, 2, 1], [1, 2, 2, 1], [1, 1, 1, 1]],
   legend: {
-    '1': '#CCC'
+    '1': '#0C0',
+    '2': '#C0C'
   }
 };
+
+draw.fill('#DDD');
 
 draw.render(sprite);
 

@@ -6,18 +6,18 @@ dom = new Dom
 draw = new Draw dom.getContext()
 bitmap = new Bitmap
 
-bm = bitmap.fromPoints [
-    { x: 0, y: 0 },
-    { x: 4, y: 4 },
-    { x: 8, y: 0 },
-    { x: 12, y: 4 }
-]
-
 sprite =
     x: 0
     y: 0
-    map: bm
+    map: [
+        [1,1,1,1],
+        [1,2,2,1],
+        [1,2,2,1],
+        [1,1,1,1]
+    ]
     legend:
-        '1': '#CCC'
+        '1': '#0C0'
+        '2': '#C0C'
 
+draw.fill('#DDD')
 draw.render sprite
