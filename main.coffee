@@ -7,8 +7,8 @@ draw = new Draw dom.getContext()
 bitmap = new Bitmap
 
 sprite =
-    x: 0
-    y: 0
+    x: 9
+    y: 6    
     map: [
         [1,1,1,1],
         [1,2,2,1],

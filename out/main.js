@@ -2,9 +2,7 @@
 module.exports = {
     width: 832,
     height: 640,
-    pxSize: 16,
-    gap: 4,
-    gapColor: '#EEE',
+    pxSize: 64,
     barsColor: '#444'
 };
 },{}],2:[function(require,module,exports){
@@ -301,42 +299,26 @@ Draw = (function() {
   };
 
   Draw.prototype.fill = function(color) {
-    var halfGap, hasGap, i, j, ref, ref1, size, x, xlen, y, ylen;
-    hasGap = config.gap > 0;
     this.context.save();
-    this.context.fillStyle = hasGap ? config.gapColor : color;
+    this.context.fillStyle = color;
     this.context.fillRect(0, 0, config.width, config.height);
-    if (hasGap) {
-      xlen = config.width / config.gap;
-      ylen = config.height / config.gap;
-      size = config.pxSize;
-      halfGap = Math.floor(config.gap / 2);
-      this.context.fillStyle = color;
-      for (y = i = 0, ref = xlen; 0 <= ref ? i <= ref : i >= ref; y = 0 <= ref ? ++i : --i) {
-        for (x = j = 0, ref1 = ylen; 0 <= ref1 ? j <= ref1 : j >= ref1; x = 0 <= ref1 ? ++j : --j) {
-          this.context.fillRect(size * x + halfGap, size * y + halfGap, size - halfGap, size - halfGap);
-        }
-      }
-    }
     return this.context.restore();
   };
 
   Draw.prototype.render = function(entity) {
-    var gap, halfGap, i, j, legend, len, len1, map, mapx, mapy, size, x, y;
+    var i, j, legend, len, len1, map, mapx, mapy, size, x, y;
     size = config.pxSize;
-    gap = config.gap;
     map = entity.map;
     legend = entity.legend;
-    halfGap = Math.floor(gap / 2);
     this.context.save();
-    this.context.translate(entity.x, entity.y);
+    this.context.translate(entity.x * size, entity.y * size);
     for (y = i = 0, len = map.length; i < len; y = ++i) {
       mapy = map[y];
       for (x = j = 0, len1 = mapy.length; j < len1; x = ++j) {
         mapx = mapy[x];
         if (legend[mapx] != null) {
           this.context.fillStyle = legend[mapx];
-          this.context.fillRect(size * x + halfGap, size * y + halfGap, size - halfGap, size - halfGap);
+          this.context.fillRect(size * x, size * y, size, size);
         }
       }
     }
@@ -366,8 +348,8 @@ draw = new Draw(dom.getContext());
 bitmap = new Bitmap;
 
 sprite = {
-  x: 0,
-  y: 0,
+  x: 9,
+  y: 6,
   map: [[1, 1, 1, 1], [1, 2, 2, 1], [1, 2, 2, 1], [1, 1, 1, 1]],
   legend: {
     '1': '#0C0',
