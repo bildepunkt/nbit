@@ -1,13 +1,19 @@
 #
-# @class draw
+# @class Draw
 #
 config = require '../config'
 
 class Draw
-    constructor: (el) ->
-        @el = el
+    #
+    #
+    #
+    constructor: (context) ->
+        @context = context
 
+    #
+    #
+    #
     render: (entity) ->
-        @el
+        
 
 module.exports = Draw
