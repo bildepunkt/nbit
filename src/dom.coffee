@@ -7,7 +7,7 @@ class Dom
     #
     constructor: (canvas) ->
         @body = document.getElementsByTagName('body')[0]
-        @canvas = canvas
+        @canvas = document.getElementsByTagName('canvas')[0]
 
     #
     # @param {HTMLEntity} el - needs width and height attrs and position: absolute;

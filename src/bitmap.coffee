@@ -34,7 +34,7 @@ class Bitmap
     #
     # @param {array} points - an array of vector objects
     #
-    createBitmap: (points) ->
+    cacheBitmap: (points) ->
         lo = x: Infinity, y: Infinity
         hi = x: -Infinity, y: -Infinity
         bitmap = []

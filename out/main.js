@@ -40,7 +40,7 @@ Bitmap = (function() {
     return void 0;
   };
 
-  Bitmap.prototype.createBitmap = function(points) {
+  Bitmap.prototype.cacheBitmap = function(points) {
     var bitmap, handler, hi, i, j, k, len, len1, lo, nextPt, pt;
     lo = {
       x: Infinity,
@@ -99,7 +99,7 @@ var Dom;
 Dom = (function() {
   function Dom(canvas) {
     this.body = document.getElementsByTagName('body')[0];
-    this.canvas = canvas;
+    this.canvas = document.getElementsByTagName('canvas')[0];
   }
 
   Dom.prototype.stretchAndCenter = function(el) {
@@ -185,13 +185,15 @@ Dom = require('./src/dom');
 
 Bitmap = require('./src/bitmap');
 
-dom = new Dom(document.getElementById('nBit'));
+dom = new Dom;
+
+dom.stretchAndCenter(dom.getCanvas());
 
 draw = new Draw(dom.getCanvas().getContext('2d'));
 
 bitmap = new Bitmap;
 
-bm = bitmap.createBitmap([
+bm = bitmap.cacheBitmap([
   {
     x: 0,
     y: 0
