@@ -1,6 +1,9 @@
 #
 # @class Dom
 #
+signal = require '../lib/signal'
+config = require '../config'
+
 class Dom
     #
     # @param {HTMLEntity} canvas
@@ -8,6 +11,19 @@ class Dom
     constructor: (canvas) ->
         @body = document.getElementsByTagName('body')[0]
         @canvas = document.getElementsByTagName('canvas')[0]
+        @context = @canvas.getContext '2d'
+
+        @body.style.margin = 0
+        @body.style.backgroundColor = config.barsColor
+        @canvas.style.position = 'absolute'
+        @canvas.width = config.width
+        @canvas.height = config.height
+
+        signal.addListener window, 'resize', this.resizeHandler, @
+        @stretchAndCenter @canvas
+
+    resizeHandler: () ->
+        @stretchAndCenter @canvas
 
     #
     # @param {HTMLEntity} el - needs width and height attrs and position: absolute;
@@ -52,8 +68,11 @@ class Dom
 
         undefined
 
-    getCanvas: () ->
+    getCanvas: ()->
         @canvas
+
+    getContext: ()->
+        @context
 
 
 module.exports = Dom

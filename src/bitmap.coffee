@@ -11,12 +11,15 @@ class Bitmap
     #
     bresenhamLine: (x0, y0, x1, y1, fn) ->
         dx = Math.abs(x1 - x0)
-        sx = x0 < x1 ? 1 : -1
+        sx = if x0 < x1 then 1 else -1
         dy = Math.abs(y1 - y0)
-        sy = y0 < y1 ? 1 : -1
-        err = (dx > dy ? dx : -dy) / 2
+        sy = if y0 < y1 then 1 else -1
+        err = (if dx > dy then dx else -dy) / 2
 
-        while x0 <= x1 and y0 <= y1
+        xTotal = Math.abs x1 - x0
+        yTotal = Math.abs y1 - y0
+
+        while xTotal >= 0 and yTotal >= 0
             fn x0, y0
 
             e2 = err;
@@ -29,15 +32,19 @@ class Bitmap
                 err += dx
                 y0 += sy
 
+            xTotal--
+            yTotal--
+
         undefined
 
     #
     # @param {array} points - an array of vector objects
     #
-    cacheBitmap: (points) ->
+    fromPoints: (points) ->
         lo = x: Infinity, y: Infinity
         hi = x: -Infinity, y: -Infinity
         bitmap = []
+        # pass @bitmap via closure for each set of pts
         handler = (x, y) ->
             bitmap[y][x] = 1
 

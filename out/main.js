@@ -4,28 +4,135 @@ module.exports = {
     height: 640,
     pxSize: 16,
     gap: 4,
-    gapColor: '#FFF'
+    gapColor: '#FFF',
+    barsColor: '#444'
 };
 },{}],2:[function(require,module,exports){
+module.exports = (function() {
+    'use strict';
+
+    /**
+     * event handler
+     *
+     * @class SW.Signal
+     * @belongsto SW
+     * @singleton
+     */
+    var Signal = function() {
+        this._handlerManager = {};
+
+        this._mediator = document;
+    };
+
+    /**
+     * tune in to events from a dom element or built-in mediator
+     *
+     * @method SW.Signal.prototype.addListener
+     * @param {HTMLElement} [el] - the element to listen to (if not present, will listen to built-in mediator)
+     * @param {String} type - event type; can be custom or DOM
+     * @param {function} handler - the event handler
+     * @param {Object} [context] - if present will call handler with this scope
+     */
+    Signal.prototype.addListener = function(el, type, handler, context) {
+        var handlers;
+
+        // no element, shift args over
+        if (typeof el === 'string' && typeof type === 'function') {
+            context = handler ? handler : null;
+            handler = type;
+            type = el;
+            el = this._mediator;
+        }
+
+        if (context) {
+            if (!this._handlerManager[type]) {
+                this._handlerManager[type] = [];
+            }
+
+            handlers = {
+                handler: handler,
+                boundHandler: handler.bind(context)
+            };
+
+            this._handlerManager[type].push(handlers);
+        }
+
+        el.addEventListener(type, handlers ? handlers.boundHandler : handler, false);
+    };
+
+    /**
+     * tune out events from a dom element or built-in mediator
+     *
+     * @method SW.Signal.prototype.removeListener
+     * @param {HTMLElement} [el] - the element to stop listening to (if not present, will tune out the built-in mediator)
+     * @param {String} type - event type; can be custom or DOM
+     * @param {function} handler - the event handler
+     */
+    Signal.prototype.removeListener = function(el, type, handler) {
+        // no element, shift args over
+        if (typeof el === 'string' && typeof type === 'function') {
+            handler = type;
+            type = el;
+            el = this._mediator;
+        }
+
+        // if handler matches object of handler & boundHandler - assign boundHandler to handler; else leave as is
+        if (this._handlerManager[type]) {
+            for (var i = 0; i < this._handlerManager[type].length; i += 1) {
+                if (handler === this._handlerManager[type][i].handler) {
+                    handler = this._handlerManager[type][i].boundHandler;
+                    this._handlerManager[type].splice(i, 1);
+                    break;
+                }
+            }
+        }
+
+        el.removeEventListener(type, handler, false);
+    };
+
+    /**
+     * dispatches events from a dom element or built-in mediator
+     *
+     * @method SW.Signal.prototype.dispatch
+     * @param {HTMLElement} [el] - the element to broadcast from (if not present, will broadcast from built-in mediator)
+     * @param {String} type - event type
+     * @param {Object} data - the data to pass to the handler
+     */
+    Signal.prototype.dispatch = function(el, type, data) {
+        var customEvent;
+
+        // no element, shift args over
+        if (typeof el === 'string' && typeof type !== 'string') {
+            data = type;
+            type = el;
+            el = this._mediator;
+        }
+        
+        customEvent = new CustomEvent(type, {
+            detail : data
+        });
+
+        el.dispatchEvent(customEvent);
+    };
+
+    return new Signal();
+}());
+},{}],3:[function(require,module,exports){
 var Bitmap;
 
 Bitmap = (function() {
   function Bitmap() {}
 
   Bitmap.prototype.bresenhamLine = function(x0, y0, x1, y1, fn) {
-    var dx, dy, e2, err, ref, ref1, ref2, sx, sy;
+    var dx, dy, e2, err, sx, sy, xTotal, yTotal;
     dx = Math.abs(x1 - x0);
-    sx = (ref = x0 < x1) != null ? ref : {
-      1: -1
-    };
+    sx = x0 < x1 ? 1 : -1;
     dy = Math.abs(y1 - y0);
-    sy = (ref1 = y0 < y1) != null ? ref1 : {
-      1: -1
-    };
-    err = ((ref2 = dx > dy) != null ? ref2 : {
-      dx: -dy
-    }) / 2;
-    while (x0 <= x1 && y0 <= y1) {
+    sy = y0 < y1 ? 1 : -1;
+    err = (dx > dy ? dx : -dy) / 2;
+    xTotal = Math.abs(x1 - x0);
+    yTotal = Math.abs(y1 - y0);
+    while (xTotal >= 0 && yTotal >= 0) {
       fn(x0, y0);
       e2 = err;
       if (e2 > -dx) {
@@ -36,11 +143,13 @@ Bitmap = (function() {
         err += dx;
         y0 += sy;
       }
+      xTotal--;
+      yTotal--;
     }
     return void 0;
   };
 
-  Bitmap.prototype.cacheBitmap = function(points) {
+  Bitmap.prototype.fromPoints = function(points) {
     var bitmap, handler, hi, i, j, k, len, len1, lo, nextPt, pt;
     lo = {
       x: Infinity,
@@ -93,14 +202,30 @@ Bitmap = (function() {
 module.exports = Bitmap;
 
 
-},{}],3:[function(require,module,exports){
-var Dom;
+},{}],4:[function(require,module,exports){
+var Dom, config, signal;
+
+signal = require('../lib/signal');
+
+config = require('../config');
 
 Dom = (function() {
   function Dom(canvas) {
     this.body = document.getElementsByTagName('body')[0];
     this.canvas = document.getElementsByTagName('canvas')[0];
+    this.context = this.canvas.getContext('2d');
+    this.body.style.margin = 0;
+    this.body.style.backgroundColor = config.barsColor;
+    this.canvas.style.position = 'absolute';
+    this.canvas.width = config.width;
+    this.canvas.height = config.height;
+    signal.addListener(window, 'resize', this.resizeHandler, this);
+    this.stretchAndCenter(this.canvas);
   }
+
+  Dom.prototype.resizeHandler = function() {
+    return this.stretchAndCenter(this.canvas);
+  };
 
   Dom.prototype.stretchAndCenter = function(el) {
     var IS_LANDSCAPE, LANDSCAPE_RATIO, PORTRAIT_RATIO, elHeight, elWidth, left, ref, top, winHeight, winLandscapeRatio, winPortraitRatio, winWidth;
@@ -150,6 +275,10 @@ Dom = (function() {
     return this.canvas;
   };
 
+  Dom.prototype.getContext = function() {
+    return this.context;
+  };
+
   return Dom;
 
 })();
@@ -157,7 +286,7 @@ Dom = (function() {
 module.exports = Dom;
 
 
-},{}],4:[function(require,module,exports){
+},{"../config":1,"../lib/signal":2}],5:[function(require,module,exports){
 var Draw, config;
 
 config = require('../config');
@@ -167,7 +296,26 @@ Draw = (function() {
     this.context = context;
   }
 
-  Draw.prototype.render = function(entity) {};
+  Draw.prototype.render = function(entity) {
+    var gap, halfGap, i, j, legend, len, len1, map, mapx, mapy, size, x, y;
+    size = config.pxSize;
+    gap = config.gap;
+    map = entity.map;
+    legend = entity.legend;
+    halfGap = Math.floor(gap / 2);
+    this.context.translate(entity.x, entity.y);
+    for (y = i = 0, len = map.length; i < len; y = ++i) {
+      mapy = map[y];
+      for (x = j = 0, len1 = mapy.length; j < len1; x = ++j) {
+        mapx = mapy[x];
+        if (legend[mapx] != null) {
+          this.context.fillStyle = legend[mapx];
+          this.context.fillRect(size * x + halfGap, size * y + halfGap, size - halfGap, size - halfGap);
+        }
+      }
+    }
+    return this.context.restore();
+  };
 
   return Draw;
 
@@ -176,8 +324,8 @@ Draw = (function() {
 module.exports = Draw;
 
 
-},{"../config":1}],5:[function(require,module,exports){
-var Bitmap, Dom, Draw, bitmap, bm, dom, draw;
+},{"../config":1}],6:[function(require,module,exports){
+var Bitmap, Dom, Draw, bitmap, bm, dom, draw, sprite;
 
 Draw = require('./src/draw');
 
@@ -187,23 +335,36 @@ Bitmap = require('./src/bitmap');
 
 dom = new Dom;
 
-dom.stretchAndCenter(dom.getCanvas());
-
-draw = new Draw(dom.getCanvas().getContext('2d'));
+draw = new Draw(dom.getContext());
 
 bitmap = new Bitmap;
 
-bm = bitmap.cacheBitmap([
+bm = bitmap.fromPoints([
   {
     x: 0,
     y: 0
   }, {
     x: 4,
     y: 4
+  }, {
+    x: 8,
+    y: 0
+  }, {
+    x: 12,
+    y: 4
   }
 ]);
 
-console.log(bm);
+sprite = {
+  x: 0,
+  y: 0,
+  map: bm,
+  legend: {
+    '1': '#CCC'
+  }
+};
+
+draw.render(sprite);
 
 
-},{"./src/bitmap":2,"./src/dom":3,"./src/draw":4}]},{},[5]);
+},{"./src/bitmap":3,"./src/dom":4,"./src/draw":5}]},{},[6]);
