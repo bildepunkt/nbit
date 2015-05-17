@@ -1,4 +1,5 @@
-#
+##
+# @author Chris Peters c.concat.p@gmail.com
 # @class Draw
 #
 config = require '../config'
@@ -23,7 +24,6 @@ class Draw
         @context.save()
         @context.fillStyle = color
         @context.fillRect 0, 0, config.width, config.height
-
         @context.restore()
 
     #
@@ -31,7 +31,7 @@ class Draw
     #
     render: (entity) ->
         size = config.pxSize
-        map = entity.map
+        map = entity.getBitmap()
         legend = entity.legend
 
         @context.save()

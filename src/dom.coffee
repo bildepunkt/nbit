@@ -1,17 +1,20 @@
-#
+##
+# @author Chris Peters c.concat.p@gmail.com
 # @class Dom
 #
 signal = require '../lib/signal'
 config = require '../config'
 
 class Dom
-    #
+    ##
     # @param {HTMLEntity} canvas
     #
-    constructor: (canvas) ->
+    constructor: (canvas)->
         @body = document.getElementsByTagName('body')[0]
         @canvas = document.getElementsByTagName('canvas')[0]
         @context = @canvas.getContext '2d'
+
+        document.title = config.title ? 'nBit'
 
         @body.style.margin = 0
         @body.style.backgroundColor = config.barsColor
@@ -19,16 +22,42 @@ class Dom
         @canvas.width = config.width
         @canvas.height = config.height
 
+        @listenForInput()
+
         signal.addListener window, 'resize', this.resizeHandler, @
         @stretchAndCenter @canvas
 
-    resizeHandler: () ->
+    listenForInput: ()->
+        if config.listen.mouse
+            for type in ['click', 'dblclick', 'mousedown', 'mouseup', 'mousemove']
+                signal.addListener @canvas, type, @inputHandler, @
+        
+        if config.listen.touch
+            for type in ['tap', 'dbltap', 'touchstart', 'touchend', 'touchmove']
+                signal.addListener @canvas, type, @inputHandler, @
+
+        if config.listen.keyboard
+            for type in ['keyup', 'keydown']
+                signal.addListener @canvas, type, @inputHandler, @
+
+        undefined
+
+    ##
+    #
+    #
+    inputHandler: (e)->
+        signal.dispatch 'input', e
+
+    ##
+    #
+    #
+    resizeHandler: ()->
         @stretchAndCenter @canvas
 
-    #
+    ##
     # @param {HTMLEntity} el - needs width and height attrs and position: absolute;
     #
-    stretchAndCenter: (el) ->
+    stretchAndCenter: (el)->
         if not el.height and not el.height
             false
 
@@ -68,9 +97,15 @@ class Dom
 
         undefined
 
+    ##
+    #
+    #
     getCanvas: ()->
         @canvas
 
+    ##
+    #
+    #
     getContext: ()->
         @context
 
