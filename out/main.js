@@ -278,8 +278,8 @@ module.exports = (function() {
 },{}],3:[function(require,module,exports){
 module.exports = {
     hitPoint: function(x, y, entity) {
-        var x = entity.getX();
-        var y = entity.getY();
+        var entityX = entity.getX();
+        var entityY = entity.getY();
         var width = entity.getWidth();
         var height = entity.getHeight();
 
@@ -570,7 +570,7 @@ Draw = (function() {
     map = entity.getBitmap();
     legend = entity.legend;
     this.context.save();
-    this.context.translate(entity.x * size, entity.y * size);
+    this.context.translate(entity.x, entity.y);
     for (y = i = 0, len = map.length; i < len; y = ++i) {
       mapy = map[y];
       for (x = j = 0, len1 = mapy.length; j < len1; x = ++j) {
@@ -609,13 +609,13 @@ Input = (function(superClass) {
 
   function Input(options) {
     this.bg = new Sprite;
-    this.dragCandidate;
-    this.pressCandidate;
-    this.mouseCanDrag;
-    this.isDragging;
-    this.dragCandidateOffsetX;
-    this.dragCandidateOffsetY;
-    this.entityPool;
+    this.dragCandidate = null;
+    this.pressCandidate = null;
+    this.mouseCanDrag = null;
+    this.isDragging = null;
+    this.dragCandidateOffsetX = null;
+    this.dragCandidateOffsetY = null;
+    this.entityPool = null;
     Input.__super__.constructor.call(this);
     signal.addListener('input', this.inputHandler, this);
   }
@@ -625,7 +625,7 @@ Input = (function(superClass) {
   };
 
   Input.prototype.inputHandler = function(e) {
-    var dragCandidatePosition, eventData, eventTypes, evtEl, evtTarget, factor, i, inputEvent, len, offsetX, offsetY, type;
+    var eventData, eventTypes, evtEl, evtTarget, factor, i, inputEvent, len, offsetX, offsetY, type;
     inputEvent = e.detail;
     evtEl = inputEvent.currentTarget;
     factor = 100 / (this.getScaleFactor(evtEl)) / 100;
@@ -639,8 +639,8 @@ Input = (function(superClass) {
       eventData.absX = inputEvent.touches[0].pageX - offsetX;
       eventData.absY = inputEvent.touches[0].pageY - offsetY;
     } else {
-      eventData.absX = inputEvent.offsetX || inputEvent.clientX - evtEl.clientLeft;
-      eventData.absY = inputEvent.offsetY || inputEvent.clientY - evtEl.clientTop;
+      eventData.absX = inputEvent.offsetX || inputEvent.clientX - offsetX;
+      eventData.absY = inputEvent.offsetY || inputEvent.clientY - offsetY;
     }
     eventData.x = eventData.absX * factor;
     eventData.y = eventData.absY * factor;
@@ -682,7 +682,6 @@ Input = (function(superClass) {
       case 'mousemove':
       case 'touchmove':
         if (this.mouseCanDrag && (this.dragCandidate != null) && this.dragCandidate.getDraggable()) {
-          dragCandidatePosition = this.dragCandidate.getPosition();
           this.dragCandidate.setX(eventData.x - this.dragCandidateOffsetX);
           this.dragCandidate.setY(eventData.y - this.dragCandidateOffsetY);
           if (!this.isDragging) {
@@ -702,24 +701,26 @@ Input = (function(superClass) {
     return void 0;
   };
 
-  Input.prototype.getScaleFactor = function(evtTarget) {
+  Input.prototype.getScaleFactor = function(evtEl) {
     var canvasCssWidth, factor;
     factor = 1;
-    if (evtTarget.style.width != null) {
-      canvasCssWidth = parseInt(evtTarget.style.width, 10);
-      factor = canvasCssWidth / evtTarget.width;
+    if (evtEl.style.width != null) {
+      canvasCssWidth = parseInt(evtEl.style.width, 10);
+      factor = canvasCssWidth / evtEl.width;
     }
     return factor;
   };
 
-  Input.prototype.getTarget = function() {
+  Input.prototype.getTarget = function(e) {
+    var topmostEntity;
+    topmostEntity = null;
     this.entityPool.each(function(layer) {
-      return layer.each(function(entity) {
-        var topmostEntity;
+      layer.each(function(entity) {
         if (collision.hitPoint(e.x, e.y, entity)) {
           return topmostEntity = entity;
         }
       });
+      return void 0;
     });
     return topmostEntity;
   };
@@ -747,13 +748,14 @@ Sprite = (function(superClass) {
   function Sprite(options) {
     this.x = 0;
     this.y = 0;
-    this.width;
-    this.height;
-    this.legend;
-    this.hitMap;
-    this.bitmapName;
-    this.bitmapIndex;
+    this.width = null;
+    this.height = null;
+    this.legend = null;
+    this.hitMap = null;
+    this.bitmapName = null;
+    this.bitmapIndex = null;
     this.bitmaps = {};
+    this.draggable = false;
     Sprite.__super__.constructor.call(this);
   }
 
@@ -771,15 +773,28 @@ Sprite = (function(superClass) {
   };
 
   Sprite.prototype.addBitmap = function() {
-    var data, name;
+    var bm, data, name;
     name = arguments[0], data = 2 <= arguments.length ? slice.call(arguments, 1) : [];
     this.bitmaps[name] = data;
     this.bitmapName = name;
-    return this.setBitmap(name);
+    this.setBitmap(name);
+    if (this.width == null) {
+      bm = this.getBitmap();
+      this.height = bm.length * config.pxSize;
+      return this.width = bm[0].length * config.pxSize;
+    }
   };
 
   Sprite.prototype.setLegend = function(legend) {
     return this.legend = legend;
+  };
+
+  Sprite.prototype.setDraggable = function(val) {
+    return this.draggable = val;
+  };
+
+  Sprite.prototype.getDraggable = function() {
+    return this.draggable;
   };
 
   Sprite.prototype.press = function(e) {
@@ -815,7 +830,7 @@ Sprite = (function(superClass) {
   };
 
   Sprite.prototype.setX = function(x) {
-    return this.x = x;
+    return this.x = x - (x % config.pxSize);
   };
 
   Sprite.prototype.getY = function() {
@@ -823,7 +838,7 @@ Sprite = (function(superClass) {
   };
 
   Sprite.prototype.setY = function(y) {
-    return this.y = y;
+    return this.y = y - (y % config.pxSize);
   };
 
   Sprite.prototype.getWidth = function() {
@@ -850,7 +865,7 @@ module.exports = Sprite;
 
 
 },{"../config":1,"./base":5}],10:[function(require,module,exports){
-var Collection, Dom, Draw, Input, Sprite, dom, draw, entities, input, pool, sprite;
+var Collection, Dom, Draw, Input, Sprite, bitmap, dom, draw, entities, input, pool, render, sprite1, sprite2;
 
 Draw = require('./src/draw');
 
@@ -866,20 +881,39 @@ dom = new Dom;
 
 draw = new Draw(dom.getContext());
 
-sprite = new Sprite;
+sprite1 = new Sprite;
 
-sprite.addBitmap('blank', [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
+sprite2 = new Sprite;
 
-sprite.addBitmap('front', [[0, 0, 2, 2, 2, 2, 2, 0, 0], [0, 2, 1, 2, 1, 2, 1, 2, 0], [0, 2, 1, 1, 1, 1, 1, 2, 0], [0, 3, 3, 4, 4, 4, 3, 3, 0], [3, 3, 3, 3, 4, 3, 3, 3, 3], [3, 0, 3, 3, 3, 3, 3, 0, 3], [1, 0, 3, 3, 3, 3, 3, 0, 1], [0, 0, 3, 0, 0, 0, 3, 0, 0], [0, 0, 3, 0, 0, 0, 3, 0, 0], [0, 2, 2, 0, 0, 0, 2, 2, 0]], [[0, 0, 2, 2, 2, 2, 2, 0, 0], [0, 2, 1, 2, 1, 2, 1, 2, 0], [0, 2, 1, 1, 1, 1, 1, 2, 0], [0, 3, 3, 4, 4, 4, 3, 0, 0], [3, 3, 3, 3, 4, 3, 3, 0, 0], [3, 0, 3, 3, 3, 3, 3, 0, 0], [1, 0, 3, 3, 3, 3, 3, 0, 0], [0, 0, 3, 0, 0, 0, 3, 0, 0], [0, 0, 3, 0, 0, 0, 3, 0, 0], [0, 2, 2, 0, 0, 0, 2, 2, 0]]);
+sprite2.setX(72);
 
-sprite.setLegend({
+bitmap = [[0, 0, 2, 2, 2, 2, 2, 0, 0], [0, 2, 1, 2, 1, 2, 1, 2, 0], [0, 2, 1, 1, 1, 1, 1, 2, 0], [0, 3, 3, 4, 4, 4, 3, 3, 0], [3, 3, 3, 3, 4, 3, 3, 3, 3], [3, 0, 3, 3, 3, 3, 3, 0, 3], [1, 0, 3, 3, 3, 3, 3, 0, 1], [0, 0, 3, 0, 0, 0, 3, 0, 0], [0, 0, 3, 0, 0, 0, 3, 0, 0], [0, 2, 2, 0, 0, 0, 2, 2, 0]];
+
+sprite1.addBitmap('front', bitmap);
+
+sprite2.addBitmap('front', bitmap);
+
+sprite1.setLegend({
   '1': '#6F4F38',
   '2': '#000000',
   '3': '#70B36C',
   '4': '#AEB36C'
 });
 
-sprite.setBitmap('front', 1);
+sprite2.setLegend({
+  '1': '#6F4F00',
+  '2': '#0000FF',
+  '3': '#700000',
+  '4': '#AE0000'
+});
+
+sprite1.setBitmap('front', 0);
+
+sprite2.setBitmap('front', 0);
+
+sprite1.setDraggable(true);
+
+sprite2.setDraggable(true);
 
 pool = new Collection;
 
@@ -887,15 +921,23 @@ entities = new Collection;
 
 pool.addItem('entities', entities);
 
-entities.addItem('s', sprite);
+entities.addItem('s1', sprite1);
 
-draw.fill('#DDD');
-
-draw.render(sprite);
+entities.addItem('s2', sprite2);
 
 input = new Input;
 
 input.setEntityPool(pool);
+
+render = function() {
+  draw.fill('#DDD');
+  entities.each(function(entity) {
+    return draw.render(entity);
+  });
+  return requestAnimationFrame(render);
+};
+
+render();
 
 
 },{"./lib/collection":2,"./src/dom":6,"./src/draw":7,"./src/input":8,"./src/sprite":9}]},{},[10]);

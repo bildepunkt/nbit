@@ -14,13 +14,13 @@ class Input extends Base
     constructor: (options)->
         # used as evtTarget if none 
         @bg = new Sprite
-        @dragCandidate
-        @pressCandidate
-        @mouseCanDrag
-        @isDragging
-        @dragCandidateOffsetX
-        @dragCandidateOffsetY
-        @entityPool
+        @dragCandidate = null
+        @pressCandidate = null
+        @mouseCanDrag = null
+        @isDragging = null
+        @dragCandidateOffsetX = null
+        @dragCandidateOffsetY = null
+        @entityPool = null
 
         super()
 
@@ -49,8 +49,8 @@ class Input extends Base
             eventData.absX = inputEvent.touches[0].pageX - offsetX
             eventData.absY = inputEvent.touches[0].pageY - offsetY
         else
-            eventData.absX = inputEvent.offsetX or inputEvent.clientX - evtEl.clientLeft
-            eventData.absY = inputEvent.offsetY or inputEvent.clientY - evtEl.clientTop
+            eventData.absX = inputEvent.offsetX or inputEvent.clientX - offsetX
+            eventData.absY = inputEvent.offsetY or inputEvent.clientY - offsetY
 
         # coordinate positions relative to canvas scaling
         eventData.x = eventData.absX * factor;
@@ -93,9 +93,6 @@ class Input extends Base
 
             when 'mousemove', 'touchmove'
                 if @mouseCanDrag and @dragCandidate? and @dragCandidate.getDraggable()
-
-                    dragCandidatePosition = @dragCandidate.getPosition();
-
                     @dragCandidate.setX eventData.x - @dragCandidateOffsetX
                     @dragCandidate.setY eventData.y - @dragCandidateOffsetY
 
@@ -116,25 +113,30 @@ class Input extends Base
     ##
     # @private
     #
-    getScaleFactor: (evtTarget)->
+    getScaleFactor: (evtEl)->
         factor = 1
 
-        if evtTarget.style.width?
-            canvasCssWidth = parseInt evtTarget.style.width, 10
-            factor = canvasCssWidth / evtTarget.width
+        if evtEl.style.width?
+            canvasCssWidth = parseInt evtEl.style.width, 10
+            factor = canvasCssWidth / evtEl.width
 
         factor
 
     ##
     # @private
     #
-    getTarget: ()->
+    getTarget: (e)->
+        topmostEntity = null
+
         @entityPool.each (layer)->
             layer.each (entity)->
                 if collision.hitPoint e.x, e.y, entity
                     # continually assign higher sorted entity
                     topmostEntity = entity
 
-        return topmostEntity;
+            undefined
+
+        return topmostEntity
+
 
 module.exports = Input

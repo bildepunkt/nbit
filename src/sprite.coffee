@@ -14,27 +14,26 @@ class Sprite extends Base
     constructor: (options)->
         @x = 0
         @y = 0
-        @width
-        @height
-        @legend
-        @hitMap
-        @bitmapName
-        @bitmapIndex
+        @width = null
+        @height = null
+        @legend = null
+        @hitMap = null
+        @bitmapName = null
+        @bitmapIndex = null
         @bitmaps = {}
+        @draggable = false
 
         super()
 
     ##
     #
     #
-    setHitMap: (hitMap)->
-        @hitMap = hitMap
+    setHitMap: (hitMap)-> @hitMap = hitMap
 
     ##
     # @method Sprite.prototype.getBitmap
     #
-    getBitmap: ()->
-        @bitmaps[@bitmapName][@bitmapIndex]
+    getBitmap: ()-> @bitmaps[@bitmapName][@bitmapIndex]
 
     ##
     # @method Sprite.prototype.setBitmap
@@ -55,13 +54,29 @@ class Sprite extends Base
         @bitmapName = name
         @setBitmap name
 
+        if not @width?
+            bm = @getBitmap()
+            @height = bm.length * config.pxSize
+            @width = bm[0].length * config.pxSize
+
     ##
     # @method Sprite.prototype.setBitmap
     # @param {object} legend - key/val for colors
     #
-    setLegend: (legend)->
-        @legend = legend
+    setLegend: (legend)-> @legend = legend
     
+    ##
+    # @method Sprite.prototype.setBitmap
+    # @param {object} legend - key/val for colors
+    #
+    setDraggable: (val)-> @draggable = val
+    
+    ##
+    # @method Sprite.prototype.setBitmap
+    # @param {object} legend - key/val for colors
+    #
+    getDraggable: ()-> @draggable
+
     ##
     #
     #
@@ -98,7 +113,7 @@ class Sprite extends Base
     ##
     #
     #
-    setX: (x)-> @x = x
+    setX: (x)-> @x = x - (x % config.pxSize)
     ##
     #
     #
@@ -106,7 +121,7 @@ class Sprite extends Base
     ##
     #
     #
-    setY: (y)-> @y = y
+    setY: (y)-> @y = y - (y % config.pxSize)
     ##
     #
     #

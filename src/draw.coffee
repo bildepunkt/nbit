@@ -35,7 +35,7 @@ class Draw
         legend = entity.legend
 
         @context.save()
-        @context.translate entity.x * size, entity.y * size
+        @context.translate entity.x, entity.y
 
         for mapy, y in map
             for mapx, x in mapy
