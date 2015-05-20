@@ -592,9 +592,7 @@ module.exports = Draw;
 
 
 },{"../config":1}],8:[function(require,module,exports){
-var Base, Input, Sprite, collision, signal,
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+var Input, Sprite, collision, config, signal;
 
 collision = require('../lib/collision');
 
@@ -602,12 +600,10 @@ signal = require('../lib/signal');
 
 Sprite = require('./sprite');
 
-Base = require('./base');
+config = require('../config');
 
-Input = (function(superClass) {
-  extend(Input, superClass);
-
-  function Input(options) {
+Input = (function() {
+  function Input() {
     this.bg = new Sprite;
     this.dragCandidate = null;
     this.pressCandidate = null;
@@ -616,7 +612,8 @@ Input = (function(superClass) {
     this.dragCandidateOffsetX = null;
     this.dragCandidateOffsetY = null;
     this.entityPool = null;
-    Input.__super__.constructor.call(this);
+    this.bg.setWidth(config.width);
+    this.bg.setHeight(config.height);
     signal.addListener('input', this.inputHandler, this);
   }
 
@@ -727,12 +724,12 @@ Input = (function(superClass) {
 
   return Input;
 
-})(Base);
+})();
 
 module.exports = Input;
 
 
-},{"../lib/collision":3,"../lib/signal":4,"./base":5,"./sprite":9}],9:[function(require,module,exports){
+},{"../config":1,"../lib/collision":3,"../lib/signal":4,"./sprite":9}],9:[function(require,module,exports){
 var Base, Sprite, config,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty,
@@ -745,7 +742,7 @@ Base = require('./base');
 Sprite = (function(superClass) {
   extend(Sprite, superClass);
 
-  function Sprite(options) {
+  function Sprite() {
     this.x = 0;
     this.y = 0;
     this.width = null;

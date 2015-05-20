@@ -5,15 +5,12 @@
 collision = require '../lib/collision'
 signal = require '../lib/signal'
 Sprite = require './sprite'
-Base = require './base'
 
-class Input extends Base
+class Input
     ##
     #
     #
-    constructor: (options)->
-        # used as evtTarget if none 
-        @bg = new Sprite
+    constructor: ()->
         @dragCandidate = null
         @pressCandidate = null
         @mouseCanDrag = null
@@ -21,8 +18,6 @@ class Input extends Base
         @dragCandidateOffsetX = null
         @dragCandidateOffsetY = null
         @entityPool = null
-
-        super()
 
         signal.addListener 'input', @inputHandler, @
 
@@ -101,9 +96,6 @@ class Input extends Base
                         eventTypes.push 'dragstart'
 
                     eventTypes.push 'drag'
-
-        if not evtTarget?
-            evtTarget = @bg
 
             for type in eventTypes
                 evtTarget[type](eventData)

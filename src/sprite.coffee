@@ -9,9 +9,8 @@ Base = require './base'
 class Sprite extends Base
     ##
     # @constructor
-    # @param {object} [options]
     #
-    constructor: (options)->
+    constructor: ()->
         @x = 0
         @y = 0
         @width = null
