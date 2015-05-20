@@ -97,6 +97,7 @@ class Input
 
                     eventTypes.push 'drag'
 
+        if evtTarget?
             for type in eventTypes
                 evtTarget[type](eventData)
 
