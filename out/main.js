@@ -15,6 +15,7 @@ Vector = (function() {
     this.strokeStyle = '#0C0';
     this.fillStyle = '#C0C';
     this.size = 8;
+    this.gap = 2;
   }
 
   Vector.prototype.bresenhamize = function(x0, y0, x1, y1, fn) {
@@ -44,7 +45,7 @@ Vector = (function() {
   };
 
   Vector.prototype.setPoints = function(points) {
-    var bitmap, handler, hi, i, j, k, len, len1, lo, nextPt, p, pt;
+    var bitmap, hi, i, j, len, lo, pt;
     hi = {
       x: 0,
       y: 0
@@ -54,9 +55,6 @@ Vector = (function() {
       y: 0
     };
     bitmap = [];
-    handler = function(x, y) {
-      return bitmap[y][x] = 1;
-    };
     for (i = j = 0, len = points.length; j < len; i = ++j) {
       pt = points[i];
       lo.x = pt.x < lo.x ? pt.x : lo.x;
@@ -65,7 +63,19 @@ Vector = (function() {
       hi.y = pt.y > hi.y ? pt.y : hi.y;
     }
     bitmap = this.createBlank(hi.x - lo.x, hi.y - lo.y);
-    for (p = k = 0, len1 = points.length; k < len1; p = ++k) {
+    bitmap = this.setStroke(bitmap, points);
+    bitmap = this.setFill(bitmap);
+    this.bitmap = bitmap;
+    return void 0;
+  };
+
+  Vector.prototype.setStroke = function(bitmap, points) {
+    var handler, j, len, nextPt, p, pt;
+    handler = function(x, y) {
+      bitmap[y][x] = 1;
+      return void 0;
+    };
+    for (p = j = 0, len = points.length; j < len; p = ++j) {
       pt = points[p];
       nextPt = points[p + 1];
       if (nextPt != null) {
@@ -74,66 +84,78 @@ Vector = (function() {
         break;
       }
     }
-    this.bitmap = bitmap;
-    this.points = points;
-    return void 0;
+    return bitmap;
+  };
+
+  Vector.prototype.setFill = function(bitmap) {
+    var bitmapY, bitmapYX, fillEnded, fillStarted, fillableIndex, filledRow, j, k, len, len1, rowHasFill, x, y;
+    fillStarted = false;
+    fillEnded = false;
+    fillableIndex = false;
+    rowHasFill = false;
+    filledRow = [];
+    for (y = j = 0, len = bitmap.length; j < len; y = ++j) {
+      bitmapY = bitmap[y];
+      if (rowHasFill) {
+        bitmap[y - 1] = filledRow;
+      }
+      console.log('-----');
+      fillStarted = false;
+      fillEnded = false;
+      fillableIndex = false;
+      rowHasFill = false;
+      filledRow = [];
+      for (x = k = 0, len1 = bitmapY.length; k < len1; x = ++k) {
+        bitmapYX = bitmapY[x];
+        fillableIndex = false;
+        if (bitmapYX === 0 && bitmapY[x - 1] === 1) {
+          fillStarted = true;
+        }
+        if (bitmapYX === 1 && fillStarted) {
+          fillEnded = true;
+          rowHasFill = true;
+        }
+        if (fillStarted && !fillEnded) {
+          fillableIndex = true;
+        }
+        filledRow[x] = fillableIndex ? 2 : bitmapYX;
+      }
+    }
+    return bitmap;
   };
 
   Vector.prototype.render = function() {
-    var fn, j, len, nextPt, p, pt, ref, self;
-    self = this;
-    fn = function(x, y) {
-      return self.drawPoint(x, y);
-    };
+    var bmx, bmy, j, k, len, len1, noPoint, ref, x, y;
     this.context.save();
-    this.context.fillStyle = this.strokeStyle;
-    ref = this.points;
-    for (p = j = 0, len = ref.length; j < len; p = ++j) {
-      pt = ref[p];
-      nextPt = this.points[p + 1];
-      if (nextPt != null) {
-        this.bresenhamize(pt.x, pt.y, nextPt.x, nextPt.y, fn);
+    ref = this.bitmap;
+    for (y = j = 0, len = ref.length; j < len; y = ++j) {
+      bmy = ref[y];
+      for (x = k = 0, len1 = bmy.length; k < len1; x = ++k) {
+        bmx = bmy[x];
+        noPoint = false;
+        if (bmx === 0) {
+          noPoint = true;
+        } else if (bmx === 1) {
+          this.context.fillStyle = this.strokeStyle;
+        } else if (bmx === 2) {
+          this.context.fillStyle = this.fillStyle;
+        }
+        if (!noPoint) {
+          this.drawPoint(x, y);
+        }
       }
     }
-    this.context.save();
-    this.context.fillStyle = this.fillStyle;
-    this.fill();
     this.context.restore();
     return void 0;
   };
 
   Vector.prototype.drawPoint = function(x, y) {
-    this.context.fillRect(x * this.size, y * this.size, this.size, this.size);
-    return void 0;
-  };
-
-  Vector.prototype.fill = function() {
-    var bmx, bmy, fillingRow, inStroke, j, k, len, len1, ref, x, y;
-    ref = this.bitmap;
-    for (y = j = 0, len = ref.length; j < len; y = ++j) {
-      bmy = ref[y];
-      if (y !== 0 && y !== this.bitmap.length - 1) {
-        inStroke = false;
-        fillingRow = false;
-        for (x = k = 0, len1 = bmy.length; k < len1; x = ++k) {
-          bmx = bmy[x];
-          if (bmx === 1) {
-            if (!inStroke) {
-              inStroke = true;
-            }
-            if (fillingRow) {
-              break;
-            }
-          } else {
-            if (inStroke && !fillingRow) {
-              fillingRow = true;
-            }
-          }
-          if (fillingRow) {
-            this.drawPoint(x, y);
-          }
-        }
-      }
+    var halfGap;
+    if (this.gap != null) {
+      halfGap = this.gap / 2;
+      this.context.fillRect((x * this.size) + halfGap * x, (y * this.size) + halfGap * y, this.size - halfGap, this.size - halfGap);
+    } else {
+      this.context.fillRect(x * this.size, y * this.size, this.size, this.size);
     }
     return void 0;
   };
@@ -158,17 +180,20 @@ v = new Vector(ctx);
 
 v.setPoints([
   {
-    x: 8,
-    y: 4
-  }, {
-    x: 48,
+    x: 0,
     y: 0
   }, {
-    x: 4,
-    y: 36
-  }, {
     x: 8,
     y: 4
+  }, {
+    x: 8,
+    y: 8
+  }, {
+    x: 0,
+    y: 4
+  }, {
+    x: 0,
+    y: 0
   }
 ]);
 

@@ -12,6 +12,7 @@ class Vector
         @strokeStyle = '#0C0'
         @fillStyle = '#C0C'
         @size = 8
+        @gap = 2
 
     ##
     # @param {integer}
@@ -56,9 +57,6 @@ class Vector
         hi =  x: 0, y: 0
         lo = x: 0, y: 0
         bitmap = []
-        # pass @bitmap via closure for each set of pts
-        handler = (x, y) ->
-           bitmap[y][x] = 1
 
         for pt, i in points
             lo.x = if pt.x < lo.x then pt.x else lo.x
@@ -67,6 +65,22 @@ class Vector
             hi.y = if pt.y > hi.y then pt.y else hi.y
 
         bitmap = @createBlank hi.x - lo.x, hi.y - lo.y
+        bitmap = @setStroke bitmap, points
+        bitmap = @setFill bitmap
+
+        @bitmap = bitmap;
+
+        undefined
+
+    ##
+    #
+    #
+    setStroke: (bitmap, points)->
+        # pass bitmap via closure for each set of pts
+        handler = (x, y) ->
+           bitmap[y][x] = 1
+
+           undefined
 
         for pt, p in points
             nextPt = points[p + 1]
@@ -75,64 +89,81 @@ class Vector
             else
                 break
 
-        @bitmap = bitmap;
-        @points = points
+        bitmap
 
-        undefined
+    ##
+    # fills horizontally
+    #
+    setFill: (bitmap)->
+        fillStarted = false
+        fillEnded = false
+        fillableIndex = false
+        rowHasFill = false
+        filledRow = []
+
+        for bitmapY, y in bitmap
+
+            if rowHasFill
+                bitmap[y - 1] = filledRow
+
+            console.log '-----'
+            fillStarted = false
+            fillEnded = false
+            fillableIndex = false
+            rowHasFill = false
+            filledRow = []
+
+            for bitmapYX, x in bitmapY
+                fillableIndex = false
+
+                if bitmapYX == 0 and bitmapY[x - 1] == 1
+                    fillStarted = true
+
+                if bitmapYX == 1 and fillStarted
+                    fillEnded = true
+
+                    rowHasFill = true
+
+                if fillStarted and not fillEnded
+                    fillableIndex = true
+
+                filledRow[x] = if fillableIndex then 2 else bitmapYX
+                    
+        bitmap
 
     ##
     #
     #
     render: ()->
-        self = @
-        fn = (x, y)->
-          self.drawPoint x, y
-                     
         @context.save()
-        @context.fillStyle = @strokeStyle
-        for pt, p in @points
-            nextPt = @points[p + 1]
-            if nextPt?
-               @bresenhamize pt.x, pt.y, nextPt.x, nextPt.y, fn
 
-        @context.save()
-        @context.fillStyle = @fillStyle
-        @fill()
+        for bmy, y in @bitmap
+            for bmx, x in bmy
+                noPoint = false
+
+                if bmx == 0
+                    noPoint = true
+                else if bmx == 1
+                    @context.fillStyle = @strokeStyle
+                else if bmx == 2
+                    @context.fillStyle = @fillStyle
+                
+                if not noPoint
+                    @drawPoint x, y
+
         @context.restore()
-        
-                  
+
         undefined
 
     ##
     #
     #
     drawPoint: (x, y)->
-        @context.fillRect x * @size, y * @size, @size, @size
-
-        undefined
-
-    ##
-    #
-    #
-    fill: ()->
-        for bmy, y in @bitmap
-            if y != 0 and y != @bitmap.length - 1
-                inStroke = false
-                fillingRow = false
-
-                for bmx, x in bmy
-                    if bmx == 1
-                        if not inStroke
-                           inStroke = true
-
-                        if fillingRow
-                            break
-                    else
-                        if inStroke and not fillingRow
-                            fillingRow = true
-                            
-                    if fillingRow
-                        @drawPoint x, y
+        if @gap?
+            halfGap = @gap / 2
+            @context.fillRect (x * @size) + halfGap * x, (y * @size) + halfGap * y, @size - halfGap, @size - halfGap
+        else
+            @context.fillRect x * @size, y * @size, @size, @size
 
         undefined
 
@@ -153,9 +184,10 @@ class Vector
 
 v = new Vector ctx
 v.setPoints [
-   {x: 8,  y: 4}
-   {x: 48, y: 0}
-   {x: 4,  y: 36}
-   {x: 8,  y: 4}
+   {x: 0, y: 0}
+   {x: 8, y: 4}
+   {x: 8, y: 8}
+   {x: 0, y: 4}
+   {x: 0, y: 0}
 ]
 v.render()
