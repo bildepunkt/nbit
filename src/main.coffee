@@ -16,17 +16,19 @@ class Config
 
 ##
 # @class Game
+# @requires Scene
 #
 class Game
     constructor: (options)->
-        @_scene = options.scene
+        @_deps = options
         @_paused = false
+        @_scene = null
 
         this._start()
 
     ##
     #
-    #   
+    #
     _start: ()->
         @_update = @_update.bind this
         @_update()
@@ -37,7 +39,7 @@ class Game
     _update: ()->
         if @_paused then return
 
-        entities = @_scene.getEntities()
+        entities = @_deps.scene.getEntities()
 
         for entity in entities
             entity.render()
@@ -70,12 +72,21 @@ class Collection
     constructor: ()->
         @_items = []
 
+    ##
+    #
+    #
     addItem: (item)->
         @_items.push item
 
+    ##
+    #
+    #
     getItems: ()->
         @_items
 
+    ##
+    #
+    #
     removeItem: (target)->
         for item, i in @_items
             if target._uid == item._uid
@@ -89,14 +100,24 @@ class Collection
 #
 class Scene
     constructor: (options)->
-        @_entities = new options.Collection()
+        @_deps = options
+        @_entities = new @_deps.Collection()
 
+    ##
+    #
+    #
     addEntity: (entity)->
         @_entities.addItem entity
 
+    ##
+    #
+    #
     removeEntity: (entity)->
         @_entities.removeItem entity
 
+    ##
+    #
+    #
     getEntities: ()->
         @_entities.getItems()
 
@@ -107,13 +128,13 @@ class Scene
 #
 class Viewport
     constructor: (options)->
-        @_config = options.config
+        @_deps = options
 
-        @_canvas = document.getElementById @_config.canvasId
+        @_canvas = document.getElementById @_deps.config.canvasId
         @_context = @_canvas.getContext '2d'
 
-        @_canvas.width = @_config.width
-        @_canvas.height = @_config.height
+        @_canvas.width = @_deps.config.width
+        @_canvas.height = @_deps.config.height
 
 
 ##
@@ -123,20 +144,32 @@ class Viewport
 #
 class Sprite
     constructor: (options)->
-        @_config = options.config
-        @_viewport = options.viewport
-
+        @_deps = options
         @_x = 0
         @_y = 0
-        @_dirty = false
+        # true for initial render
+        @_dirty = true
 
+    ##
+    #
+    #
     set: (key, val)->
         @_dirty = true
         @['_' + key] = val
+        # make chainable
         @
 
+    ##
+    #
+    #
     get: (key)->
         @['_' + key]
+
+    ##
+    #
+    #
+    render: ()->
+        if not @_dirty then return
 
 
 ##
@@ -149,11 +182,15 @@ class Bitmap extends Sprite
     constructor: (options)->
         super options
 
+        @_deps = options
         @_bitmap = null
         @_legend = null
 
+    ##
+    #
+    #
     render: ()->
-        undefined
+        super()
 
 
 ##
@@ -166,8 +203,15 @@ class Point extends Sprite
     constructor: (options)->
         super options
 
+        @_deps = options
+
+    ##
+    #
+    #
     render: ()->
-        @_viewport._context.fillRect @_x, @_y, @_config.scale, @_config.scale
+        super()
+
+        @_deps.viewport._context.fillRect @_x, @_y, @_deps.config.scale, @_deps.config.scale
 
 ###
 ##

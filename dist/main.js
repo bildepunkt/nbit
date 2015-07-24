@@ -23,8 +23,9 @@
 
   Game = (function() {
     function Game(options) {
-      this._scene = options.scene;
+      this._deps = options;
       this._paused = false;
+      this._scene = null;
       this._start();
     }
 
@@ -38,7 +39,7 @@
       if (this._paused) {
         return;
       }
-      entities = this._scene.getEntities();
+      entities = this._deps.scene.getEntities();
       for (j = 0, len = entities.length; j < len; j++) {
         entity = entities[j];
         entity.render();
@@ -97,7 +98,8 @@
 
   Scene = (function() {
     function Scene(options) {
-      this._entities = new options.Collection();
+      this._deps = options;
+      this._entities = new this._deps.Collection();
     }
 
     Scene.prototype.addEntity = function(entity) {
@@ -118,11 +120,11 @@
 
   Viewport = (function() {
     function Viewport(options) {
-      this._config = options.config;
-      this._canvas = document.getElementById(this._config.canvasId);
+      this._deps = options;
+      this._canvas = document.getElementById(this._deps.config.canvasId);
       this._context = this._canvas.getContext('2d');
-      this._canvas.width = this._config.width;
-      this._canvas.height = this._config.height;
+      this._canvas.width = this._deps.config.width;
+      this._canvas.height = this._deps.config.height;
     }
 
     return Viewport;
@@ -131,11 +133,10 @@
 
   Sprite = (function() {
     function Sprite(options) {
-      this._config = options.config;
-      this._viewport = options.viewport;
+      this._deps = options;
       this._x = 0;
       this._y = 0;
-      this._dirty = false;
+      this._dirty = true;
     }
 
     Sprite.prototype.set = function(key, val) {
@@ -148,6 +149,12 @@
       return this['_' + key];
     };
 
+    Sprite.prototype.render = function() {
+      if (!this._dirty) {
+
+      }
+    };
+
     return Sprite;
 
   })();
@@ -157,12 +164,13 @@
 
     function Bitmap(options) {
       Bitmap.__super__.constructor.call(this, options);
+      this._deps = options;
       this._bitmap = null;
       this._legend = null;
     }
 
     Bitmap.prototype.render = function() {
-      return void 0;
+      return Bitmap.__super__.render.call(this);
     };
 
     return Bitmap;
@@ -174,10 +182,12 @@
 
     function Point(options) {
       Point.__super__.constructor.call(this, options);
+      this._deps = options;
     }
 
     Point.prototype.render = function() {
-      return this._viewport._context.fillRect(this._x, this._y, this._config.scale, this._config.scale);
+      Point.__super__.render.call(this);
+      return this._deps.viewport._context.fillRect(this._x, this._y, this._deps.config.scale, this._deps.config.scale);
     };
 
     return Point;
