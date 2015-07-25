@@ -8,7 +8,7 @@
   Config = (function() {
     function Config(options) {
       var key;
-      this.scale = 4;
+      this.scale = 8;
       this.width = 800;
       this.height = 600;
       this.canvasId = 'canvas';
@@ -151,8 +151,9 @@
 
     Sprite.prototype.render = function() {
       if (!this._dirty) {
-
+        return;
       }
+      return this._dirty = false;
     };
 
     return Sprite;

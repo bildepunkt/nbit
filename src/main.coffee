@@ -1,14 +1,49 @@
 'use strict';
 
 ##
-# @class Config
+# @class Base
 #
-class Config
+class Base
+    ##
+    #
+    #
+    @counter: 0
+    
+    ##
+    #
+    #
+    @getUid: -> @counter++
+
+    constructor: ->
+        @_uid = Base.getUid()
+
+    ##
+    #
+    #
+    set: (key, val)->
+        @['_' + key] = val
+        # make chainable
+        @
+
+    ##
+    #
+    #
+    get: (key)->
+        @['_' + key]
+
+
+##
+# @class Config
+# @extend Base
+#
+class Config extends Base
     constructor: (options)->
-        @scale = 4;
-        @width = 800;
-        @height = 600;
-        @canvasId = 'canvas';
+        super()
+
+        @_scale = 8;
+        @_width = 800;
+        @_height = 600;
+        @_canvasId = 'canvas';
 
         for key of options
             @[key] = options[key]
@@ -16,10 +51,13 @@ class Config
 
 ##
 # @class Game
-# @requires Scene
+# @extends Base
+# @require Scene
 #
-class Game
+class Game extends Base
     constructor: (options)->
+        super()
+
         @_deps = options
         @_paused = false
         @_scene = null
@@ -29,14 +67,14 @@ class Game
     ##
     #
     #
-    _start: ()->
+    _start: ->
         @_update = @_update.bind this
         @_update()
 
     ##
     #
     #
-    _update: ()->
+    _update: ->
         if @_paused then return
 
         entities = @_deps.scene.getEntities()
@@ -67,9 +105,12 @@ class Game
 
 ##
 # @class Collection
+# @extend Base
 #
-class Collection
-    constructor: ()->
+class Collection extends Base
+    constructor: ->
+        super()
+
         @_items = []
 
     ##
@@ -81,25 +122,22 @@ class Collection
     ##
     #
     #
-    getItems: ()->
-        @_items
-
-    ##
-    #
-    #
     removeItem: (target)->
         for item, i in @_items
-            if target._uid == item._uid
+            if target.get 'uid' === item.get 'uid'
                 @_items.splice i, 1
                 break
 
 
 ##
 # @class Scene
+# @extend Base
 # @require Collection
 #
-class Scene
+class Scene extends Base
     constructor: (options)->
+        super()
+
         @_deps = options
         @_entities = new @_deps.Collection()
 
@@ -118,35 +156,40 @@ class Scene
     ##
     #
     #
-    getEntities: ()->
+    getEntities: ->
         @_entities.getItems()
 
 
 ##
 # @class Viewport
+# @extend Base
 # @require Config
 #
-class Viewport
+class Viewport extends Base
     constructor: (options)->
-        @_deps = options
+        super()
 
+        @_deps = options
         @_canvas = document.getElementById @_deps.config.canvasId
         @_context = @_canvas.getContext '2d'
-
         @_canvas.width = @_deps.config.width
         @_canvas.height = @_deps.config.height
 
 
 ##
 # @class Sprite
+# @extend Base
 # @require Viewport
 # @require Config
 #
-class Sprite
+class Sprite extends Base
     constructor: (options)->
+        super()
+
         @_deps = options
         @_x = 0
         @_y = 0
+        @_rotation = 0
         # true for initial render
         @_dirty = true
 
@@ -155,42 +198,15 @@ class Sprite
     #
     set: (key, val)->
         @_dirty = true
-        @['_' + key] = val
-        # make chainable
-        @
+        super key val
 
     ##
     #
     #
-    get: (key)->
-        @['_' + key]
-
-    ##
-    #
-    #
-    render: ()->
+    render: ->
         if not @_dirty then return
-
-
-##
-# @class Bitmap
-# @require Viewport
-# @require Config
-# @extend Sprite
-#
-class Bitmap extends Sprite
-    constructor: (options)->
-        super options
-
-        @_deps = options
-        @_bitmap = null
-        @_legend = null
-
-    ##
-    #
-    #
-    render: ()->
-        super()
+        @_dirty = false
+        @_deps.viewport.get('context').save()
 
 
 ##
@@ -214,6 +230,27 @@ class Point extends Sprite
         @_deps.viewport._context.fillRect @_x, @_y, @_deps.config.scale, @_deps.config.scale
 
 ###
+
+##
+# @class Bitmap
+# @extend Sprite
+# @require Viewport
+# @require Config
+#
+class Bitmap extends Sprite
+    constructor: (options)->
+        super options
+
+        @_deps = options
+        @_bitmap = null
+        @_legend = null
+
+    ##
+    #
+    #
+    render: ()->
+        super()
+
 ##
 # @class Line
 # @require Viewport
