@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "coffee --watch --compile --output dist/ src/"
+    "watch": "coffee --watch --compile --output dist/ src/",
+    "bld-ex": "node_modules/.bin/browserify examples/point/main.js -o examples/point/bundle.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "coffee-script": "^1.9.3"
+    "browserify": "^11.0.0",
+    "coffee-script": "^1.9.3",
+    "coffeeify": "^1.1.0"
   }
 }
