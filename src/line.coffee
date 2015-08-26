@@ -42,13 +42,30 @@ class Line extends Sprite
     render: ()->
         super()
 
+        dimensions = @_deps.config.get 'scale'
+        ctx = @_deps.viewport.get('context')
+
         for point, i in @_points
             nextPt = @_points[i + 1]
 
             if nextPt?
+                ctx.save()
+                ctx.translate @_x * dimensions, @_y * dimensions
+
                 point = utils.clone point
                 nextPt = utils.clone nextPt
+
+                if @_rotation != 0
+                    point = utils.rotatePoint(
+                        point.x, point.y, @_offsetX, @_offsetY, @_rotation
+                    )
+                    nextPt = utils.rotatePoint(
+                        nextPt.x, nextPt.y, @_offsetX, @_offsetY, @_rotation
+                    )
+
                 Bresenham.calculate point, nextPt, @_drawPt.bind @
+
+                ctx.restore()
 
         undefined
 

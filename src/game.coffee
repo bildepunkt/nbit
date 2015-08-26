@@ -31,9 +31,9 @@ class Game extends Base
 
         config = @_deps.config
         entities = @_deps.scene.getEntities()
-        ctx = @_deps.viewport.get 'context'
+        
+        @_deps.viewport.clear()
 
-        ctx.clearRect 0, 0, config.get('width'), config.get('height')
         @_scene.update()
         
         for entity in entities

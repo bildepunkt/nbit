@@ -9,8 +9,8 @@ class Config extends Base
         super()
 
         @_scale = 8;
-        @_width = 800;
-        @_height = 600;
+        @_width = 100;
+        @_height = 75;
         @_canvasId = 'canvas';
 
         for key of options

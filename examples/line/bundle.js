@@ -156,8 +156,8 @@
       var key;
       Config.__super__.constructor.call(this);
       this._scale = 8;
-      this._width = 800;
-      this._height = 600;
+      this._width = 100;
+      this._height = 75;
       this._canvasId = 'canvas';
       for (key in options) {
         this['_' + key] = options[key];
@@ -199,14 +199,13 @@
     };
 
     Game.prototype._update = function() {
-      var config, ctx, entities, entity, i, len;
+      var config, entities, entity, i, len;
       if (this._paused) {
         return;
       }
       config = this._deps.config;
       entities = this._deps.scene.getEntities();
-      ctx = this._deps.viewport.get('context');
-      ctx.clearRect(0, 0, config.get('width'), config.get('height'));
+      this._deps.viewport.clear();
       this._scene.update();
       for (i = 0, len = entities.length; i < len; i++) {
         entity = entities[i];
@@ -251,6 +250,15 @@ module.exports = {
             }
         }
         return obj;
+    },
+
+    rotatePoint: function (px, py, cx, cy, angle) {
+        angle *= (Math.PI/180);
+        
+        return {
+            x: Math.cos(angle) * (px - cx) + cx,
+            y: Math.sin(angle) * (px - cx) + cy
+        };
     }
 };
 
@@ -288,16 +296,25 @@ module.exports = {
     };
 
     Line.prototype.render = function() {
-      var i, j, len, nextPt, point, ref;
+      var ctx, dimensions, i, j, len, nextPt, point, ref;
       Line.__super__.render.call(this);
+      dimensions = this._deps.config.get('scale');
+      ctx = this._deps.viewport.get('context');
       ref = this._points;
       for (i = j = 0, len = ref.length; j < len; i = ++j) {
         point = ref[i];
         nextPt = this._points[i + 1];
         if (nextPt != null) {
+          ctx.save();
+          ctx.translate(this._x * dimensions, this._y * dimensions);
           point = utils.clone(point);
           nextPt = utils.clone(nextPt);
+          if (this._rotation !== 0) {
+            point = utils.rotatePoint(point.x, point.y, this._offsetX, this._offsetY, this._rotation);
+            nextPt = utils.rotatePoint(nextPt.x, nextPt.y, this._offsetX, this._offsetY, this._rotation);
+          }
           Bresenham.calculate(point, nextPt, this._drawPt.bind(this));
+          ctx.restore();
         }
       }
       return void 0;
@@ -372,8 +389,8 @@ module.exports = {
       this._y = 0;
       this._rotation = 0;
       this._color = '#000';
-      this._scaleX = 1;
-      this._scaleY = 1;
+      this._offsetX = 0;
+      this._offsetY = 0;
       this._dirty = true;
     }
 
@@ -410,13 +427,19 @@ module.exports = {
     extend(Viewport, superClass);
 
     function Viewport(options) {
+      var dimensions;
       Viewport.__super__.constructor.call(this);
       this._deps = options;
+      dimensions = this._deps.config.get('scale');
       this._canvas = document.getElementById(this._deps.config.get('canvasId'));
       this._context = this._canvas.getContext('2d');
-      this._canvas.width = this._deps.config.get('width');
-      this._canvas.height = this._deps.config.get('height');
+      this._canvas.width = this._deps.config.get('width') * dimensions;
+      this._canvas.height = this._deps.config.get('height') * dimensions;
     }
+
+    Viewport.prototype.clear = function() {
+      return this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    };
 
     return Viewport;
 
@@ -438,8 +461,8 @@ var Game = require('../../dist/game');
 
 // config
 var myConfig = new Config({
-    width: 640,
-    height: 480
+    width: 80,
+    height: 60
 });
 
 // viewport
@@ -448,11 +471,14 @@ var myViewport = new Viewport({
 });
 
 // point
+var rotation = 0;
 var myLine = new Line({
     config: myConfig,
     viewport: myViewport
 });
-myLine.setPoints({x: 4, y: 4}, {x: 16, y: 32});
+myLine.set('x', 40).set('y', 30);
+myLine.setPoints({x: 0, y: 0}, {x: 16, y: 0});
+
 
 // scene
 var myScene = new Scene({
@@ -460,7 +486,7 @@ var myScene = new Scene({
 });
 myScene.addEntity(myLine);
 myScene.update = function() {
-    
+    myLine.set('rotation', rotation += 4);
 };
 
 // game

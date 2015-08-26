@@ -16,8 +16,8 @@
       this._y = 0;
       this._rotation = 0;
       this._color = '#000';
-      this._scaleX = 1;
-      this._scaleY = 1;
+      this._offsetX = 0;
+      this._offsetY = 0;
       this._dirty = true;
     }
 

@@ -24,14 +24,13 @@
     };
 
     Game.prototype._update = function() {
-      var config, ctx, entities, entity, i, len;
+      var config, entities, entity, i, len;
       if (this._paused) {
         return;
       }
       config = this._deps.config;
       entities = this._deps.scene.getEntities();
-      ctx = this._deps.viewport.get('context');
-      ctx.clearRect(0, 0, config.get('width'), config.get('height'));
+      this._deps.viewport.clear();
       this._scene.update();
       for (i = 0, len = entities.length; i < len; i++) {
         entity = entities[i];

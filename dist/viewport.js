@@ -10,13 +10,19 @@
     extend(Viewport, superClass);
 
     function Viewport(options) {
+      var dimensions;
       Viewport.__super__.constructor.call(this);
       this._deps = options;
+      dimensions = this._deps.config.get('scale');
       this._canvas = document.getElementById(this._deps.config.get('canvasId'));
       this._context = this._canvas.getContext('2d');
-      this._canvas.width = this._deps.config.get('width');
-      this._canvas.height = this._deps.config.get('height');
+      this._canvas.width = this._deps.config.get('width') * dimensions;
+      this._canvas.height = this._deps.config.get('height') * dimensions;
     }
+
+    Viewport.prototype.clear = function() {
+      return this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    };
 
     return Viewport;
 

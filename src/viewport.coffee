@@ -10,10 +10,15 @@ class Viewport extends Base
         super()
 
         @_deps = options
+
+        dimensions = @_deps.config.get 'scale'
+
         @_canvas = document.getElementById @_deps.config.get 'canvasId'
         @_context = @_canvas.getContext '2d'
-        @_canvas.width = @_deps.config.get 'width'
-        @_canvas.height = @_deps.config.get 'height'
+        @_canvas.width = @_deps.config.get('width' ) * dimensions
+        @_canvas.height = @_deps.config.get('height') * dimensions
 
+    clear: ->
+        @_context.clearRect 0, 0, @_canvas.width, @_canvas.height
 
 module.exports = Viewport

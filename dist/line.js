@@ -31,16 +31,25 @@
     };
 
     Line.prototype.render = function() {
-      var i, j, len, nextPt, point, ref;
+      var ctx, dimensions, i, j, len, nextPt, point, ref;
       Line.__super__.render.call(this);
+      dimensions = this._deps.config.get('scale');
+      ctx = this._deps.viewport.get('context');
       ref = this._points;
       for (i = j = 0, len = ref.length; j < len; i = ++j) {
         point = ref[i];
         nextPt = this._points[i + 1];
         if (nextPt != null) {
+          ctx.save();
+          ctx.translate(this._x * dimensions, this._y * dimensions);
           point = utils.clone(point);
           nextPt = utils.clone(nextPt);
+          if (this._rotation !== 0) {
+            point = utils.rotatePoint(point.x, point.y, this._offsetX, this._offsetY, this._rotation);
+            nextPt = utils.rotatePoint(nextPt.x, nextPt.y, this._offsetX, this._offsetY, this._rotation);
+          }
           Bresenham.calculate(point, nextPt, this._drawPt.bind(this));
+          ctx.restore();
         }
       }
       return void 0;

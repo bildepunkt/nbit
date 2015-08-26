@@ -13,8 +13,8 @@
       var key;
       Config.__super__.constructor.call(this);
       this._scale = 8;
-      this._width = 800;
-      this._height = 600;
+      this._width = 100;
+      this._height = 75;
       this._canvasId = 'canvas';
       for (key in options) {
         this['_' + key] = options[key];

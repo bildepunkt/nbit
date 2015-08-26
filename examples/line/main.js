@@ -9,8 +9,8 @@ var Game = require('../../dist/game');
 
 // config
 var myConfig = new Config({
-    width: 640,
-    height: 480
+    width: 80,
+    height: 60
 });
 
 // viewport
@@ -19,11 +19,14 @@ var myViewport = new Viewport({
 });
 
 // point
+var rotation = 0;
 var myLine = new Line({
     config: myConfig,
     viewport: myViewport
 });
-myLine.setPoints({x: 4, y: 4}, {x: 16, y: 32});
+myLine.set('x', 40).set('y', 30);
+myLine.setPoints({x: 0, y: 0}, {x: 16, y: 0});
+
 
 // scene
 var myScene = new Scene({
@@ -31,7 +34,7 @@ var myScene = new Scene({
 });
 myScene.addEntity(myLine);
 myScene.update = function() {
-    
+    myLine.set('rotation', rotation += 4);
 };
 
 // game

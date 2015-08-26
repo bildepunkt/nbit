@@ -17,5 +17,14 @@ module.exports = {
             }
         }
         return obj;
+    },
+
+    rotatePoint: function (px, py, cx, cy, angle) {
+        angle *= (Math.PI/180);
+        
+        return {
+            x: Math.cos(angle) * (px - cx) + cx,
+            y: Math.sin(angle) * (px - cx) + cy
+        };
     }
 };

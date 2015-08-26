@@ -4,6 +4,7 @@ Base = require('./base');
 # @class Scene
 # @extend Base
 # @require Collection
+# @require Vieport
 #
 class Scene extends Base
     constructor: (options)->
