@@ -1,65 +1,56 @@
-###
+Sprite = require './sprite'
+Bresenham = require './bresenham'
+utils = require './lib/utils'
+
+##
 # @class Line
 # @require Viewport
 # @require Config
 # @extend Sprite
 #
 class Line extends Sprite
-    'use strict';
+    constructor: (options)->
+        super options
 
-    var Line = function(options) {
-        this._points = [];
-    };
+        @_deps = options
 
-    Line.prototype = new Sprite(options);
+        @_points = []
 
-    Line.prototype._bresenhamise = function(x0, y0, x1, y1) {
-        var dx = Math.abs(x1 - x0);
-        var sx = x0 < x1 ? 1 : -1;
-        var dy = Math.abs(y1 - y0);
-        var sy = y0 < y1 ? 1 : -1;
-        var err = dx > dy ? dx : -dy / 2;
+    ##
+    #
+    #
+    _drawPt: (x, y)->
+        dimensions = @_deps.config.get 'scale'
+        @_deps.viewport.get('context').fillRect(
+            x * dimensions - dimensions / 2,
+            y * dimensions - dimensions / 2,
+            dimensions,
+            dimensions
+        )
 
-        var xTotal = Math.abs(x1 - x0);
-        var yTotal = Math.abs(y1 - y0);
+        undefined
 
-        while (xTotal >= 0 || yTotal >= 0) {
-            this._drawPixel(x0, y0).bind(this);
+    ##
+    #
+    #
+    setPoints: (a, b)->
+        @_points = [a, b]
 
-            var e2 = err;
+    ##
+    #
+    #
+    render: ()->
+        super()
 
-            if (e2 > -dx) {
-                err -= dy
-                x0 += sx
-            }
+        for point, i in @_points
+            nextPt = @_points[i + 1]
 
-            if (e2 < dy) {
-                err += dx
-                y0 += sy
-            }
+            if nextPt?
+                point = utils.clone point
+                nextPt = utils.clone nextPt
+                Bresenham.calculate point, nextPt, @_drawPt.bind @
 
-            xTotal--;
-            yTotal--;
-        }
-    };
+        undefined
 
-    Line.prototype._drawPixel = function(x, y) {
-        this._viewport.context.drawRect(x, y, this._config.scale, this._config.scale);
-    };
+module.exports = Line
 
-    Line.prototype.render = function() {
-        var nextPt;
-
-        for(var i = 0, len = this._points.length; i < len; i += 1) {
-            nextPt = this._points[i + 1];
-
-            if (typeof nextPt === 'object' && nextPt != null) {
-                this._bresenhamise(this._points[i], nextPt);
-            }
-        }
-    };
-
-    return Line;
-}());
-
-###

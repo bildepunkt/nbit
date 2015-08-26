@@ -13,13 +13,35 @@
       this._uid = Base.getUid();
     }
 
+    Base.prototype._checkProp = function(key) {
+      if (!this.hasOwnProperty('_' + key)) {
+        throw new Error("property '" + key + "' does not exist");
+      }
+    };
+
     Base.prototype.set = function(key, val) {
+      this._checkProp(key);
       this['_' + key] = val;
       return this;
     };
 
     Base.prototype.get = function(key) {
+      this._checkProp(key);
       return this['_' + key];
+    };
+
+    Base.prototype.add = function(key, val) {
+      var keys, results;
+      if (typeof key === 'string' && val !== void 0) {
+        return this['_' + key] = val;
+      } else if (typeof key === 'object' && (key != null) && val === void 0) {
+        keys = key;
+        results = [];
+        for (key in keys) {
+          results.push(this['_' + key] = keys[key]);
+        }
+        return results;
+      }
     };
 
     return Base;

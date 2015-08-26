@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch": "coffee --watch --compile --output dist/ src/",
-    "bld-ex": "node_modules/.bin/browserify examples/point/main.js -o examples/point/bundle.js"
+    "bld-ex": "node_modules/.bin/browserify examples/*/main.js -o examples/*/bundle.js"
   },
   "author": "",
   "license": "ISC",

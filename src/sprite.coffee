@@ -15,6 +15,8 @@ class Sprite extends Base
         @_y = 0
         @_rotation = 0
         @_color = '#000'
+        @_scaleX = 1
+        @_scaleY = 1
 
         # true for initial render
         @_dirty = true
