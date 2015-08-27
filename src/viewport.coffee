@@ -21,4 +21,15 @@ class Viewport extends Base
     clear: ->
         @_context.clearRect 0, 0, @_canvas.width, @_canvas.height
 
+    drawPoint: (x, y)->
+        dimensions = @_deps.config.get 'scale'
+        @_context.fillRect(
+            x * dimensions - dimensions / 2,
+            y * dimensions - dimensions / 2,
+            dimensions,
+            dimensions
+        )
+
+        undefined
+
 module.exports = Viewport

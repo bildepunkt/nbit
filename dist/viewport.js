@@ -24,6 +24,13 @@
       return this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
     };
 
+    Viewport.prototype.drawPoint = function(x, y) {
+      var dimensions;
+      dimensions = this._deps.config.get('scale');
+      this._context.fillRect(x * dimensions - dimensions / 2, y * dimensions - dimensions / 2, dimensions, dimensions);
+      return void 0;
+    };
+
     return Viewport;
 
   })(Base);

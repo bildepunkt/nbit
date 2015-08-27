@@ -1,4 +1,5 @@
 Sprite = require './sprite'
+Vector = require './vector'
 Bresenham = require './bresenham'
 utils = require './lib/utils'
 
@@ -15,20 +16,6 @@ class Line extends Sprite
         @_deps = options
 
         @_points = []
-
-    ##
-    #
-    #
-    _drawPt: (x, y)->
-        dimensions = @_deps.config.get 'scale'
-        @_deps.viewport.get('context').fillRect(
-            x * dimensions - dimensions / 2,
-            y * dimensions - dimensions / 2,
-            dimensions,
-            dimensions
-        )
-
-        undefined
 
     ##
     #
@@ -52,8 +39,8 @@ class Line extends Sprite
                 ctx.save()
                 ctx.translate @_x * dimensions, @_y * dimensions
 
-                point = utils.clone point
-                nextPt = utils.clone nextPt
+                point = new Vector point
+                nextPt = new Vector nextPt
 
                 if @_rotation != 0
                     point = utils.rotatePoint(
@@ -63,7 +50,7 @@ class Line extends Sprite
                         nextPt.x, nextPt.y, @_offsetX, @_offsetY, @_rotation
                     )
 
-                Bresenham.calculate point, nextPt, @_drawPt.bind @
+                Bresenham.calculate point, nextPt, @_deps.viewport.drawPoint.bind @_deps.viewport
 
                 ctx.restore()
 
