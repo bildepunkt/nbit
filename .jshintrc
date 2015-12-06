@@ -1,0 +1,12 @@
+{
+    "globals": {
+        "module": true
+    },
+    "node": true,
+    "curly": true,
+    "browser": true,
+    "browserify": true,
+    "esnext": true,
+    "strict": false,
+    "jasmine": true
+}
