@@ -1,9 +1,10 @@
 /**
  * @class       Point
- * @description create 2D point
+ * @description Create 2D point. This object does not conform to the underscore
+ *              prefixed private property paradigm.
  * @author      Chris Peters
  */
-export default class Vector {
+export default class Point {
     /**
      * initialize a point with 0,0 or given coordinates
      * @param  {Integer} x

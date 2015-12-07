@@ -7,7 +7,7 @@
     "watch": "node_modules/.bin/babel src --watch --out-dir dist",
     "test": "node_modules/.bin/jasmine --verbose --junitreport",
     "serve": "open -a \"Google Chrome\" \"http://localhost:3000/\"; node server.js",
-    "build-examples": "for d in examples/*/; do node_modules/.bin/babel $d/main.js --out-file $d/build.js && node_modules/.bin/browserify $d/build.js -o  $d/bundle.js && rm $d/build.js; done"
+    "build-examples": "node_modules/.bin/browserify examples/main.js -t babelify -o examples/bundle.js; for d in examples/*/; do node_modules/.bin/browserify $d/main.js -t babelify -o $d/bundle.js; done"
   },
   "repository": {
     "type": "git",
@@ -21,10 +21,11 @@
   "homepage": "https://github.com/c-concat-p/nbit#readme",
   "devDependencies": {
     "babel": "5.8.23",
-    "browserify": "^11.0.1",
-    "finalhandler": "^0.4.0",
-    "httpdispatcher": "^0.4.0",
-    "jasmine": "^2.3.2",
-    "serve-static": "^1.10.0"
+    "babelify": "6.1.2",
+    "browserify": "11.0.1",
+    "finalhandler": "0.4.0",
+    "httpdispatcher": "0.4.0",
+    "jasmine": "2.3.2",
+    "serve-static": "1.10.0"
   }
 }
