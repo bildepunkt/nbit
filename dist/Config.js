@@ -4,13 +4,13 @@
  *              the underscore prefixed private property paradigm.
  * @author      Chris Peters
  */
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
     value: true
 });
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var Config =
 /**
@@ -24,11 +24,12 @@ function Config(options) {
     this.gameWidth = 100;
     this.gameHeight = 75;
     this.parentEl = document.body;
+    this.bgColor = '';
 
     for (var key in options) {
         this[key] = options[key];
     }
 };
 
-exports["default"] = Config;
-module.exports = exports["default"];
+exports['default'] = Config;
+module.exports = exports['default'];

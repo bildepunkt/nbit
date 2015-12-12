@@ -3,16 +3,19 @@
 <head>
     <link rel="stylesheet" type="text/css" href="../styles/examples.css">
     <link rel="stylesheet" href="../styles/prism.css">
-    <script src="../scripts/prism.js"></script>
     <title>nBit Viewport Example</title>
 </head>
 <body>
     <h1>nBit Viewport Example</h1>
-    <div class="viewport" id="viewport"></div>
-    <p class="label">code:</p>
-    <pre class="language-markup"><code class="language-markup" id="code"></code></pre>
+    <p>Press the button to launch the Viewport. Resize the window to see the maintained aspect ratio.</p>
+    <p>Press <code>esc</code> to close it.</p>
+    <button>launch</button>
+    <div class="overlay hide"></div>
+    <!-- example code -->
+    <p class="label">code</p>
+    <pre data-src="main.js"></pre>
 
     <script src="bundle.js"></script>
-    <script src="../scripts/examples.js"></script>
+    <script src="../scripts/prism.js"></script>
 </body>
 </html>

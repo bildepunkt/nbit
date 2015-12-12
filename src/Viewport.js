@@ -24,16 +24,21 @@ export default class Viewport {
         this._canvas.width = this._config.gameWidth * this._config.pixelSize;
         this._canvas.height = this._config.gameHeight * this._config.pixelSize;
         this._canvas.style.position = 'absolute';
+        this._canvas.style.backgroundColor = this._config.bgColor;
 
         this._config.parentEl.appendChild(this._canvas);
 
-        this._canvas.addEventListener('resize', this._handleResize);
+        this._window.addEventListener('resize', this._handleResize.bind(this));
+
+        this._handleResize();
     }
 
     _handleResize() {
-        let winWidth = this._window.innerWidth;
-        let winHeight = this._window.innerHeight;
-        let { top, left, width, height } = MaintainMax.fit(winWidth, winHeight);
+        let config = this._config;
+        let { top, left, width, height } = MaintainMax.fit(
+            config.gameWidth * config.pixelSize,
+            config.gameHeight * config.pixelSize
+        );
 
         this._canvas.style.top = `${Math.round(top)}px`;
         this._canvas.style.left = `${Math.round(left)}px`;

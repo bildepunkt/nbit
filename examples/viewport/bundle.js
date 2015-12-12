@@ -5,15 +5,15 @@
  *              the underscore prefixed private property paradigm.
  * @author      Chris Peters
  */
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
     value: true
 });
 
 function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
+        throw new TypeError('Cannot call a class as a function');
     }
 }
 
@@ -26,17 +26,18 @@ function Config(options) {
     _classCallCheck(this, Config);
 
     this.pixelSize = 8;
-    this.gameWidth = 80;
-    this.gameHeight = 60;
+    this.gameWidth = 100;
+    this.gameHeight = 75;
     this.parentEl = document.body;
+    this.bgColor = '';
 
     for (var key in options) {
         this[key] = options[key];
     }
 };
 
-exports["default"] = Config;
-module.exports = exports["default"];
+exports['default'] = Config;
+module.exports = exports['default'];
 
 },{}],2:[function(require,module,exports){
 'use strict';
@@ -97,19 +98,21 @@ var Viewport = (function () {
         this._canvas.width = this._config.gameWidth * this._config.pixelSize;
         this._canvas.height = this._config.gameHeight * this._config.pixelSize;
         this._canvas.style.position = 'absolute';
+        this._canvas.style.backgroundColor = this._config.bgColor;
 
         this._config.parentEl.appendChild(this._canvas);
 
-        this._canvas.addEventListener('resize', this._handleResize);
+        this._window.addEventListener('resize', this._handleResize.bind(this));
+
+        this._handleResize();
     }
 
     _createClass(Viewport, [{
         key: '_handleResize',
         value: function _handleResize() {
-            var winWidth = this._window.innerWidth;
-            var winHeight = this._window.innerHeight;
+            var config = this._config;
 
-            var _MaintainMax$fit = _libMaintainMax2['default'].fit(winWidth, winHeight);
+            var _MaintainMax$fit = _libMaintainMax2['default'].fit(config.gameWidth * config.pixelSize, config.gameHeight * config.pixelSize);
 
             var top = _MaintainMax$fit.top;
             var left = _MaintainMax$fit.left;
@@ -239,8 +242,23 @@ var _distViewport = require('../../dist/Viewport');
 var _distViewport2 = _interopRequireDefault(_distViewport);
 
 var config = new _distConfig2['default']({
-    parentEl: document.querySelector('#viewport')
+    bgColor: 'rgba(255, 255, 255, 0.5)'
 });
-var viewport = new _distViewport2['default']({ config: config });
+var btn = document.querySelector('button');
+var overlay = document.querySelector('.overlay');
+
+btn.addEventListener('click', function () {
+    overlay.className = overlay.className.replace(' hide', '');
+    new _distViewport2['default']({ config: config });
+});
+
+document.addEventListener('keyup', function (e) {
+    var canvas = document.querySelector('canvas');
+
+    if (canvas && e.keyCode === 27) {
+        overlay.className += ' hide';
+        document.body.removeChild(canvas);
+    }
+});
 
 },{"../../dist/Config":1,"../../dist/Viewport":2}]},{},[4]);

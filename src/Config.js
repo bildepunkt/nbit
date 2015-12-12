@@ -14,6 +14,7 @@ export default class Config {
         this.gameWidth = 100;
         this.gameHeight = 75;
         this.parentEl = document.body;
+        this.bgColor = '';
 
         for (let key in options) {
             this[key] = options[key];

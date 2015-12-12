@@ -42,19 +42,21 @@ var Viewport = (function () {
         this._canvas.width = this._config.gameWidth * this._config.pixelSize;
         this._canvas.height = this._config.gameHeight * this._config.pixelSize;
         this._canvas.style.position = 'absolute';
+        this._canvas.style.backgroundColor = this._config.bgColor;
 
         this._config.parentEl.appendChild(this._canvas);
 
-        this._canvas.addEventListener('resize', this._handleResize);
+        this._window.addEventListener('resize', this._handleResize.bind(this));
+
+        this._handleResize();
     }
 
     _createClass(Viewport, [{
         key: '_handleResize',
         value: function _handleResize() {
-            var winWidth = this._window.innerWidth;
-            var winHeight = this._window.innerHeight;
+            var config = this._config;
 
-            var _MaintainMax$fit = _libMaintainMax2['default'].fit(winWidth, winHeight);
+            var _MaintainMax$fit = _libMaintainMax2['default'].fit(config.gameWidth * config.pixelSize, config.gameHeight * config.pixelSize);
 
             var top = _MaintainMax$fit.top;
             var left = _MaintainMax$fit.left;
