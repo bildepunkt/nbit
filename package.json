@@ -7,7 +7,7 @@
     "watch": "node_modules/.bin/babel src --watch --out-dir dist",
     "test": "node_modules/.bin/jasmine --verbose --junitreport",
     "serve": "open -a \"Google Chrome\" \"http://localhost:3000/\"; node server.js",
-    "build-examples": "for d in examples/*/; do node_modules/.bin/browserify $d/main.js -t babelify -o $d/bundle.js; done"
+    "bld-ex": "for d in examples/*/; do node_modules/.bin/browserify $d/main.js -t babelify -o $d/bundle.js; done"
   },
   "repository": {
     "type": "git",

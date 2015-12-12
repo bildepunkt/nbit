@@ -21,8 +21,9 @@ function Config(options) {
     _classCallCheck(this, Config);
 
     this.pixelSize = 8;
-    this.gameWidth = 80;
-    this.gameHeight = 60;
+    this.gameWidth = 100;
+    this.gameHeight = 75;
+    this.parentEl = document.body;
 
     for (var key in options) {
         this[key] = options[key];

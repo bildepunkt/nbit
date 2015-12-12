@@ -13,7 +13,7 @@ nBit allows you to create retro 8, 16, however-many-bit style games quickly and 
 #### Build Examples
 Use this command for easy **nBit** development. Just develop in an ```/examples``` subdirectory.
 
-    npm run-script build-examples
+    npm run-script bld-ex
 
 #### Spin up a Node
 Serve up the examples on a ```nodejs``` server.

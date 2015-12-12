@@ -1,0 +1,23 @@
+body {
+    margin: 48px;
+}
+
+pre {
+    overflow-x: auto;
+}
+
+.label {
+    color: gray;
+    font-family: sans-serif;
+    text-transform: uppercase;
+}
+
+.viewport {
+    /*assuming game canvas set to 800x600*/
+    height: 600px;
+    margin: 36px 0;
+    max-width: 800px;
+    overflow: auto;
+    position: relative;
+    border: 1px dashed gray;
+}

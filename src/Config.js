@@ -11,8 +11,9 @@ export default class Config {
      */
     constructor(options) {
         this.pixelSize = 8;
-        this.gameWidth = 80;
-        this.gameHeight = 60;
+        this.gameWidth = 100;
+        this.gameHeight = 75;
+        this.parentEl = document.body;
 
         for (let key in options) {
             this[key] = options[key];
