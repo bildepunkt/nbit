@@ -241,23 +241,31 @@ var _distViewport = require('../../dist/Viewport');
 
 var _distViewport2 = _interopRequireDefault(_distViewport);
 
+// initialize new config object with custom bg color
 var config = new _distConfig2['default']({
     bgColor: 'rgba(255, 255, 255, 0.5)'
 });
+// initialize the new Viewport passing in the config object
+new _distViewport2['default']({ config: config });
+
+// setup the dom for showing hiding the canvas
+var canvas = document.querySelector('canvas');
 var btn = document.querySelector('button');
 var overlay = document.querySelector('.overlay');
+var hideClass = ' hide';
+
+// hide canvas initially
+canvas.className += hideClass;
 
 btn.addEventListener('click', function () {
-    overlay.className = overlay.className.replace(' hide', '');
-    new _distViewport2['default']({ config: config });
+    overlay.className = overlay.className.replace(hideClass, '');
+    canvas.className = canvas.className.replace(hideClass, '');
 });
 
 document.addEventListener('keyup', function (e) {
-    var canvas = document.querySelector('canvas');
-
-    if (canvas && e.keyCode === 27) {
-        overlay.className += ' hide';
-        document.body.removeChild(canvas);
+    if (e.keyCode === 27) {
+        overlay.className += hideClass;
+        canvas.className += hideClass;
     }
 });
 
