@@ -6,15 +6,30 @@ button {
     padding: 8px;
 }
 
+a {
+    color: #48C;
+    text-decoration: none;
+}
+
+iframe {
+    border: none;
+    display: block;
+    margin: 24px 0;
+}
+
+.content {
+    margin: 36px 0;
+}
+
 .label {
-    color: gray;
+    color: #CCC;
     font-family: sans-serif;
     text-transform: uppercase;
 }
 
 .overlay {
     left: 0;
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
@@ -25,11 +40,11 @@ button {
     display: none;
 }
 
-.viewport {
-    /*assuming game canvas set to 800x600*/
+.viewport-container {
+    /*assuming game canvas set to 600x600*/
     height: 600px;
     margin: 36px 0;
-    max-width: 800px;
+    max-width: 600px;
     overflow: auto;
     position: relative;
     border: 1px dashed gray;

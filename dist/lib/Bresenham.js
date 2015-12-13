@@ -1,6 +1,7 @@
 /**
  * @class       Bresenham
- * @description Use Bresenham's formula to calculate the points between points
+ * @description Bresenham's formulae for calculating blocks from curves, between points etc.
+ *              Thanks to Zingl Alois @ http://members.chello.at/easyfilter/bresenham.html
  * @author      Chris Peters
  */
 "use strict";
@@ -19,42 +20,38 @@ var Bresenham = (function () {
     }
 
     _createClass(Bresenham, null, [{
-        key: "calculate",
+        key: "plotLine",
 
         /**
-         * calculate the connection points between two points
+         * plot the connecting blocks between two points
          * @param {Point} ptA
          * @param {Point} ptB
          * @param {function} callback - what to do when a connection point is calculated
          */
-        value: function calculate(ptA, ptB, callback) {
+        value: function plotLine(ptA, ptB, plot) {
             var dx = Math.abs(ptB.x - ptA.x);
             var sx = ptA.x < ptB.x ? 1 : -1;
-            var dy = Math.abs(ptB.y - ptA.y);
+            var dy = -Math.abs(ptB.y - ptA.y);
             var sy = ptA.y < ptB.y ? 1 : -1;
-            var err = (dx > dy ? dx : -dy) / 2;
-            var e2 = undefined;
+            var err = dx + dy,
+                e2 = undefined;
 
-            var xTotal = Math.abs(ptB.x - ptA.x);
-            var yTotal = Math.abs(ptB.y - ptA.y);
+            while (true) {
+                plot(ptA, ptB);
 
-            while (xTotal >= 0 || yTotal >= 0) {
-                callback(ptA.x, ptA.y);
+                if (ptA.x == ptB.x && ptA.y == ptB.y) break;
 
-                e2 = err;
+                e2 = 2 * err;
 
-                if (e2 > -dx) {
-                    err -= dy;
+                if (e2 >= dy) {
+                    err += dy;
                     ptA.x += sx;
                 }
 
-                if (e2 < dy) {
+                if (e2 <= dx) {
                     err += dx;
                     ptA.y += sy;
                 }
-
-                xTotal--;
-                yTotal--;
             }
         }
     }]);

@@ -25,11 +25,12 @@ var Config =
 function Config(options) {
     _classCallCheck(this, Config);
 
-    this.pixelSize = 8;
+    this.blockSize = 8;
     this.gameWidth = 100;
     this.gameHeight = 75;
     this.parentEl = document.body;
-    this.bgColor = '';
+    this.parentElBgColor = '#000';
+    this.canvasBgColor = '#FFF';
 
     for (var key in options) {
         this[key] = options[key];
@@ -95,11 +96,12 @@ var Viewport = (function () {
         this._canvas = this._document.createElement('canvas');
         this._context = this._canvas.getContext('2d');
 
-        this._canvas.width = this._config.gameWidth * this._config.pixelSize;
-        this._canvas.height = this._config.gameHeight * this._config.pixelSize;
+        this._canvas.width = this._config.gameWidth * this._config.blockSize;
+        this._canvas.height = this._config.gameHeight * this._config.blockSize;
         this._canvas.style.position = 'absolute';
-        this._canvas.style.backgroundColor = this._config.bgColor;
+        this._canvas.style.backgroundColor = this._config.canvasBgColor;
 
+        this._config.parentEl.style.backgroundColor = this._config.parentElBgColor;
         this._config.parentEl.appendChild(this._canvas);
 
         this._window.addEventListener('resize', this._handleResize.bind(this));
@@ -112,7 +114,7 @@ var Viewport = (function () {
         value: function _handleResize() {
             var config = this._config;
 
-            var _MaintainMax$fit = _libMaintainMax2['default'].fit(config.gameWidth * config.pixelSize, config.gameHeight * config.pixelSize);
+            var _MaintainMax$fit = _libMaintainMax2['default'].fit(config.gameWidth * config.blockSize, config.gameHeight * config.blockSize);
 
             var top = _MaintainMax$fit.top;
             var left = _MaintainMax$fit.left;
@@ -243,30 +245,11 @@ var _distViewport2 = _interopRequireDefault(_distViewport);
 
 // initialize new config object with custom bg color
 var config = new _distConfig2['default']({
-    bgColor: 'rgba(255, 255, 255, 0.5)'
+    parentElBgColor: '#444',
+    canvasBgColor: '#CCC'
 });
+
 // initialize the new Viewport passing in the config object
 new _distViewport2['default']({ config: config });
-
-// setup the dom for showing hiding the canvas
-var canvas = document.querySelector('canvas');
-var btn = document.querySelector('button');
-var overlay = document.querySelector('.overlay');
-var hideClass = ' hide';
-
-// hide canvas initially
-canvas.className += hideClass;
-
-btn.addEventListener('click', function () {
-    overlay.className = overlay.className.replace(hideClass, '');
-    canvas.className = canvas.className.replace(hideClass, '');
-});
-
-document.addEventListener('keyup', function (e) {
-    if (e.keyCode === 27) {
-        overlay.className += hideClass;
-        canvas.className += hideClass;
-    }
-});
 
 },{"../../dist/Config":1,"../../dist/Viewport":2}]},{},[4]);

@@ -23,9 +23,9 @@ export default class GetSet {
 
     /**
      * set on or more properties
-     * @param {String|Object} key A string to set one property, or an object to set
+     * @param {String|Object} key    A string to set one property, or an object to set
      *                               many
-     * @param {Any}           [val] The value to assign if setting a single value
+     * @param {Any}           [val]  The value to assign if setting a single value
      * @return {GetSet}       Return this object for chaining
      */
     set(key, val) {

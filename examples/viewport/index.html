@@ -3,19 +3,26 @@
 <head>
     <link rel="stylesheet" type="text/css" href="../styles/examples.css">
     <link rel="stylesheet" href="../styles/prism.css">
-    <title>nBit Viewport Example</title>
+    <title>Viewport | nBit Example</title>
 </head>
 <body>
-    <h1>nBit Viewport Example</h1>
-    <p>Press the button to launch the Viewport. Resize the window to see the maintained aspect ratio.</p>
-    <p>Press <code>esc</code> to close it.</p>
-    <button>launch</button>
-    <div class="overlay hide"></div>
+    <h1><a title="Examples" href="../">Examples</a> > nBit Viewport</h1>
+
+    <div class="content">
+        <p>The nBit Viewport should to be rendered in its own document. It will adjust (via css) to fit whatever sized window it is given, while maintaining aspect ratio. Below are two examples rendered into iframes.</p>
+        <iframe src="viewport.html" width="256" height="144"></iframe>
+        <iframe src="viewport.html" width="144" height="256"></iframe>
+
+
+        <p>Click the link below to launch the Viewport on its own page. Resize the window to see how the canvas maintains its aspect ratio.</p>
+        <a href="viewport.html"><button>Launch</button></a>
+    </div>
+
     <!-- example code -->
     <p class="label">code</p>
     <pre data-src="main.js"></pre>
 
-    <script src="bundle.js"></script>
+    <!-- scripts -->
     <script src="../scripts/prism.js"></script>
 </body>
 </html>

@@ -20,11 +20,12 @@ var Config =
 function Config(options) {
     _classCallCheck(this, Config);
 
-    this.pixelSize = 8;
+    this.blockSize = 8;
     this.gameWidth = 100;
     this.gameHeight = 75;
     this.parentEl = document.body;
-    this.bgColor = '';
+    this.parentElBgColor = '#000';
+    this.canvasBgColor = '#FFF';
 
     for (var key in options) {
         this[key] = options[key];

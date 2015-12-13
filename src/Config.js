@@ -10,11 +10,12 @@ export default class Config {
      * @return {[type]} [description]
      */
     constructor(options) {
-        this.pixelSize = 8;
+        this.blockSize = 8;
         this.gameWidth = 100;
         this.gameHeight = 75;
         this.parentEl = document.body;
-        this.bgColor = '';
+        this.parentElBgColor = '#000';
+        this.canvasBgColor = '#FFF';
 
         for (let key in options) {
             this[key] = options[key];
