@@ -21,8 +21,8 @@ export default class Viewport {
         this._canvas = this._document.createElement('canvas');
         this._context = this._canvas.getContext('2d');
 
-        this._canvas.width = this._config.gameWidth * this._config.blockSize;
-        this._canvas.height = this._config.gameHeight * this._config.blockSize;
+        this._canvas.width = this._config.viewportWidth * this._config.blockSize;
+        this._canvas.height = this._config.viewportHeight * this._config.blockSize;
         this._canvas.style.position = 'absolute';
         this._canvas.style.backgroundColor = this._config.canvasBgColor;
 
@@ -37,8 +37,8 @@ export default class Viewport {
     _handleResize() {
         let config = this._config;
         let { top, left, width, height } = MaintainMax.fit(
-            config.gameWidth * config.blockSize,
-            config.gameHeight * config.blockSize
+            config.viewportWidth * config.blockSize,
+            config.viewportHeight * config.blockSize
         );
 
         this._canvas.style.top = `${Math.round(top)}px`;

@@ -26,8 +26,8 @@ function Config(options) {
     _classCallCheck(this, Config);
 
     this.blockSize = 8;
-    this.gameWidth = 100;
-    this.gameHeight = 75;
+    this.viewportWidth = 100;
+    this.viewportHeight = 75;
     this.parentEl = document.body;
     this.parentElBgColor = '#000';
     this.canvasBgColor = '#FFF';
@@ -177,8 +177,8 @@ var Viewport = (function () {
         this._canvas = this._document.createElement('canvas');
         this._context = this._canvas.getContext('2d');
 
-        this._canvas.width = this._config.gameWidth * this._config.blockSize;
-        this._canvas.height = this._config.gameHeight * this._config.blockSize;
+        this._canvas.width = this._config.viewportWidth * this._config.blockSize;
+        this._canvas.height = this._config.viewportHeight * this._config.blockSize;
         this._canvas.style.position = 'absolute';
         this._canvas.style.backgroundColor = this._config.canvasBgColor;
 
@@ -195,7 +195,7 @@ var Viewport = (function () {
         value: function _handleResize() {
             var config = this._config;
 
-            var _MaintainMax$fit = _libMaintainMax2['default'].fit(config.gameWidth * config.blockSize, config.gameHeight * config.blockSize);
+            var _MaintainMax$fit = _libMaintainMax2['default'].fit(config.viewportWidth * config.blockSize, config.viewportHeight * config.blockSize);
 
             var top = _MaintainMax$fit.top;
             var left = _MaintainMax$fit.left;
@@ -553,14 +553,13 @@ var _distDrawBlock2 = _interopRequireDefault(_distDrawBlock);
 // initialize new config object
 var config = new _distConfig2['default']({
     blockSize: 32,
-    gameWidth: 32,
-    gameHeight: 24
+    viewportWidth: 32,
+    viewportHeight: 24
 });
 // initialize the new Viewport passing in the config object
 var viewport = new _distViewport2['default']({ config: config });
 // initialize block with config, and initial values
 var block = new _distDrawBlock2['default']({ config: config }, 0, 0, '#C22');
-
 block.render(viewport.getContext());
 
 block.set({
@@ -568,7 +567,6 @@ block.set({
     y: 6,
     color: '#4C4'
 });
-
 block.render(viewport.getContext());
 
 block.set({
@@ -576,7 +574,6 @@ block.set({
     y: 12,
     color: '#48F'
 });
-
 block.render(viewport.getContext());
 
 },{"../../dist/Config":1,"../../dist/Viewport":3,"../../dist/draw/Block":4}]},{},[7]);

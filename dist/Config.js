@@ -21,8 +21,8 @@ function Config(options) {
     _classCallCheck(this, Config);
 
     this.blockSize = 8;
-    this.gameWidth = 100;
-    this.gameHeight = 75;
+    this.viewportWidth = 100;
+    this.viewportHeight = 75;
     this.parentEl = document.body;
     this.parentElBgColor = '#000';
     this.canvasBgColor = '#FFF';

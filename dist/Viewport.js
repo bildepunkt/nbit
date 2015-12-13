@@ -39,8 +39,8 @@ var Viewport = (function () {
         this._canvas = this._document.createElement('canvas');
         this._context = this._canvas.getContext('2d');
 
-        this._canvas.width = this._config.gameWidth * this._config.blockSize;
-        this._canvas.height = this._config.gameHeight * this._config.blockSize;
+        this._canvas.width = this._config.viewportWidth * this._config.blockSize;
+        this._canvas.height = this._config.viewportHeight * this._config.blockSize;
         this._canvas.style.position = 'absolute';
         this._canvas.style.backgroundColor = this._config.canvasBgColor;
 
@@ -57,7 +57,7 @@ var Viewport = (function () {
         value: function _handleResize() {
             var config = this._config;
 
-            var _MaintainMax$fit = _libMaintainMax2['default'].fit(config.gameWidth * config.blockSize, config.gameHeight * config.blockSize);
+            var _MaintainMax$fit = _libMaintainMax2['default'].fit(config.viewportWidth * config.blockSize, config.viewportHeight * config.blockSize);
 
             var top = _MaintainMax$fit.top;
             var left = _MaintainMax$fit.left;

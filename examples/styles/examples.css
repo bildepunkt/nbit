@@ -40,11 +40,8 @@ iframe {
     display: none;
 }
 
-.viewport-container {
-    /*assuming game canvas set to 600x600*/
-    height: 600px;
+.viewport {
     margin: 36px 0;
-    max-width: 600px;
     overflow: auto;
     position: relative;
     border: 1px dashed gray;
