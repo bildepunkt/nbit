@@ -3,6 +3,7 @@ import MaintainMax from './lib/MaintainMax';
 /**
  * @class       Viewport
  * @description Creates and handles the canvas DOM element
+ * @extends     GetSet
  * @required    MaintainMax
  * @author      Chris Peters
  */
@@ -34,6 +35,9 @@ export default class Viewport {
         this._handleResize();
     }
 
+    /**
+     * [_handleResize description]
+     */
     _handleResize() {
         let config = this._config;
         let { top, left, width, height } = MaintainMax.fit(
@@ -47,6 +51,9 @@ export default class Viewport {
         this._canvas.style.height = `${Math.round(height)}px`;
     }
 
+    /**
+     * @return {Object} The canvas' 2d context object
+     */
     getContext() {
         return this._context;
     }

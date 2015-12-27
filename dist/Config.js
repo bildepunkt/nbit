@@ -1,16 +1,17 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 /**
  * @class       Config
  * @description The configuration object for nBit. This object does not conform to
  *              the underscore prefixed private property paradigm.
  * @author      Chris Peters
  */
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var Config =
 /**
@@ -32,5 +33,4 @@ function Config(options) {
     }
 };
 
-exports['default'] = Config;
-module.exports = exports['default'];
+exports.default = Config;

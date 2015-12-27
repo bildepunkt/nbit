@@ -1,7 +1,6 @@
 /**
  * @class       Bresenham
  * @description Bresenham's formulae for calculating blocks from curves, between points etc.
- *              Thanks to Zingl Alois @ http://members.chello.at/easyfilter/bresenham.html
  * @author      Chris Peters
  */
 export default class Bresenham {
@@ -19,9 +18,11 @@ export default class Bresenham {
         let err = dx + dy, e2;
 
         while (true) {
-            plot(ptA, ptB);
+            plot(ptA.x, ptA.y);
 
-            if (ptA.x == ptB.x && ptA.y == ptB.y) break;
+            if (ptA.x == ptB.x && ptA.y == ptB.y) {
+                break;
+            }
 
             e2 = 2 * err;
 

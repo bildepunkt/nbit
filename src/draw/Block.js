@@ -1,43 +1,45 @@
-import Drawable from './Drawable';
-
 /**
- * @class       Block
+ * @class       draw.Block
  * @description 2D point with color data
- * @extends     {Drawable}
  * @author      Chris Peters
  */
-export default class Block extends Drawable {
+export default class Block {
     /**
-     * Initialize a point with 0,0 or given coordinates
-     *
-     * @param {Object}  deps        Injected dependencies
-     * @param {Object}  deps.config Configuration
-     * @param {Integer} [x]         Initial x position
-     * @param {Integer} [y]         Initial y position
-     * @param {String}  [color]     Initial color
+     * [getPointOffset description]
+     * @param {Integer} x    The y coord
+     * @param {Integer} y    The x coord
+     * @param {Integer} size The block size
+     * @return {Object}      The Block point offset
      */
-    constructor(deps, x, y, color) {
-        super(deps);
-
-        this._config = deps.config;
-
-        this._x = x || 0;
-        this._y = y || 0;
-        this._color = color || '#000';
+    static _getPixelOffset(x, y, size) {
+        return {
+            x: (Math.round(x) * size) - (size / 2),
+            y: (Math.round(y) * size) - (size / 2)
+        };
     }
 
     /**
      * Renders a block to the canvas
      *
-     * @param {Object} context
+     * @param {Object} context The canvas' 2d context object
      */
-    render(context) {
-        let size = this._config.blockSize;
-        let { x, y } = this._getPixelOffset(this._x, this._y);
+    static render(x, y, color, size) {
+        let offset = this._getPixelOffset(x, y, size);
 
-        context.save();
-        context.fillStyle = this._color;
-        context.fillRect(x, y, size, size);
-        context.restore();
+        Block._context.save();
+        Block._context.fillStyle = color;
+        Block._context.fillRect(offset.x, offset.y, size, size);
+        Block._context.restore();
+    }
+
+    static setContext(context) {
+        Block._context = context;
+
+        return this;
     }
 }
+
+/**
+ * Static properties
+ */
+Block._context = null;

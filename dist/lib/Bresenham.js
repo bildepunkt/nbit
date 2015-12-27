@@ -1,18 +1,19 @@
-/**
- * @class       Bresenham
- * @description Bresenham's formulae for calculating blocks from curves, between points etc.
- *              Thanks to Zingl Alois @ http://members.chello.at/easyfilter/bresenham.html
- * @author      Chris Peters
- */
 "use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @class       Bresenham
+ * @description Bresenham's formulae for calculating blocks from curves, between points etc.
+ *              Thanks to Zingl Alois: http://members.chello.at/easyfilter/bresenham.html
+ * @author      Chris Peters
+ */
 
 var Bresenham = (function () {
     function Bresenham() {
@@ -37,9 +38,11 @@ var Bresenham = (function () {
                 e2 = undefined;
 
             while (true) {
-                plot(ptA, ptB);
+                plot(ptA.x, ptA.y);
 
-                if (ptA.x == ptB.x && ptA.y == ptB.y) break;
+                if (ptA.x == ptB.x && ptA.y == ptB.y) {
+                    break;
+                }
 
                 e2 = 2 * err;
 
@@ -59,5 +62,4 @@ var Bresenham = (function () {
     return Bresenham;
 })();
 
-exports["default"] = Bresenham;
-module.exports = exports["default"];
+exports.default = Bresenham;

@@ -1,21 +1,20 @@
-nBit
+nbit
 ====
 
-### A fun-to-use Javascript library for making (n)bit style games on the canvas element!
+### A Javascript library for making retro-looking, (n)bit style games on the canvas!
 
-nBit allows you to create retro 8, 16, however-many-bit style games quickly and easily. Just feed a 2D array or point cloud into nBit's engine and you have a procedural, pixellated graphics asset for your game!
+nbit allows you to create retro 8, 16, however-many-bit style games quickly and easily. Just feed a 2D array or point cloud into nbit's engine and you have a procedural, pixellated graphics asset for your game!
 
 #### Run Tests
 
-    npm run-script test
-
+    npm run-script ####
 
 #### Build Examples
-Use this command for easy **nBit** development. Just develop in an ```/examples``` subdirectory.
+Run this command from inside ```pages/examples``` for easy nbit development. Just develop in a new or existing ```examples``` subdirectory.
 
-    npm run-script bld-ex
+    npm run-script ####
 
 #### Spin up a Node
-Serve up the examples on a ```nodejs``` server.
+Run this from ```pages/``` to serve up the docs and examples on a ```nodejs``` server.
 
     npm run-script serve

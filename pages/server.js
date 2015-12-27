@@ -1,9 +1,10 @@
-var finalhandler = require('finalhandler');
-var serveStatic = require('serve-static');
-var http = require('http');
+var finalhandler = require('finalhandler'),
+    serveStatic = require('serve-static'),
+    http = require('http');
+
 var PORT = 3000;
 
-var serve = serveStatic('examples', {
+var serve = serveStatic('./', {
     index: ['index.html']
 });
 

@@ -1,3 +1,4 @@
+"use strict";
 
 /**
  * Bresenham Curve Rasterizing Algorithms
@@ -6,8 +7,6 @@
  * @version 1.3
  * @url     http://members.chello.at/easyfilter/bresenham.html
 */
-
-"use strict";
 
 function assert(a) {
    if (!a) console.log("Assertion failed in bresenham.js " + a);
@@ -476,12 +475,12 @@ function plotCubicBezier(x0, y0, x1, y1, x2, y2, x3, y3) {
          t1 = (yb - t2) / ya;if (Math.abs(t1) < 1.0) t[n++] = t1;
          t1 = (yb + t2) / ya;if (Math.abs(t1) < 1.0) t[n++] = t1;
       }
-   for (i = 1; i < n; i++) /* bubble sort of 4 points */
-   if ((t1 = t[i - 1]) > t[i]) {
-      t[i - 1] = t[i];t[i] = t1;i = 0;
-   }
-
-   t1 = -1.0;t[n] = 1.0; /* begin / end point */
+   for (i = 1; i < n; i++) {
+      /* bubble sort of 4 points */
+      if ((t1 = t[i - 1]) > t[i]) {
+         t[i - 1] = t[i];t[i] = t1;i = 0;
+      }
+   }t1 = -1.0;t[n] = 1.0; /* begin / end point */
    for (i = 0; i <= n; i++) {
       /* plot each segment separately */
       t2 = t[i]; /* sub-divide at t[i-1], t[i] */
@@ -726,96 +725,75 @@ function plotQuadBezierAA(x0, y0, x1, y1, x2, y2) {
    plotQuadBezierSegAA(x0, y0, x1, y1, x2, y2); /* remaining part */
 }
 
-function plotQuadRationalBezierSegAA(_x, _x2, _x3, _x4, _x5, _x6, _x7) {
-   var _again = true;
+function plotQuadRationalBezierSegAA(x0, y0, x1, y1, x2, y2, w) {
+   /* draw an anti-aliased rational quadratic Bezier segment, squared weight */
+   var sx = x2 - x1,
+       sy = y2 - y1; /* relative values for checks */
+   var dx = x0 - x2,
+       dy = y0 - y2,
+       xx = x0 - x1,
+       yy = y0 - y1;
+   var xy = xx * sy + yy * sx,
+       cur = xx * sy - yy * sx,
+       err,
+       ed,
+       f; /* curvature */
 
-   _function: while (_again) {
-      var x0 = _x,
-          y0 = _x2,
-          x1 = _x3,
-          y1 = _x4,
-          x2 = _x5,
-          y2 = _x6,
-          w = _x7;
-      sx = sy = dx = dy = xx = yy = xy = cur = err = ed = f = undefined;
-      _again = false;
-      /* draw an anti-aliased rational quadratic Bezier segment, squared weight */
-      var sx = x2 - x1,
-          sy = y2 - y1; /* relative values for checks */
-      var dx = x0 - x2,
-          dy = y0 - y2,
-          xx = x0 - x1,
-          yy = y0 - y1;
-      var xy = xx * sy + yy * sx,
-          cur = xx * sy - yy * sx,
-          err,
-          ed,
-          f; /* curvature */
+   assert(xx * sx <= 0.0 && yy * sy <= 0.0); /* sign of gradient must not change */
 
-      assert(xx * sx <= 0.0 && yy * sy <= 0.0); /* sign of gradient must not change */
-
-      if (cur != 0.0 && w > 0.0) {
-         /* no straight line */
-         if (sx * sx + sy * sy > xx * xx + yy * yy) {
-            /* begin with shorter part */
-            x2 = x0;x0 -= dx;y2 = y0;y0 -= dy;cur = -cur; /* swap P0 P2 */
-         }
-         xx = 2.0 * (4.0 * w * sx * xx + dx * dx); /* differences 2nd degree */
-         yy = 2.0 * (4.0 * w * sy * yy + dy * dy);
-         sx = x0 < x2 ? 1 : -1; /* x step direction */
-         sy = y0 < y2 ? 1 : -1; /* y step direction */
-         xy = -2.0 * sx * sy * (2.0 * w * xy + dx * dy);
-
-         if (cur * sx * sy < 0) {
-            /* negated curvature? */
-            xx = -xx;yy = -yy;cur = -cur;xy = -xy;
-         }
-         dx = 4.0 * w * (x1 - x0) * sy * cur + xx / 2.0 + xy; /* differences 1st degree */
-         dy = 4.0 * w * (y0 - y1) * sx * cur + yy / 2.0 + xy;
-
-         if (w < 0.5 && dy > dx) {
-            /* flat ellipse, algorithm fails */
-            cur = (w + 1.0) / 2.0;w = Math.sqrt(w);xy = 1.0 / (w + 1.0);
-            sx = Math.floor((x0 + 2.0 * w * x1 + x2) * xy / 2.0 + 0.5); /* subdivide curve */
-            sy = Math.floor((y0 + 2.0 * w * y1 + y2) * xy / 2.0 + 0.5);
-            dx = Math.floor((w * x1 + x0) * xy + 0.5);dy = Math.floor((y1 * w + y0) * xy + 0.5);
-            plotQuadRationalBezierSegAA(x0, y0, dx, dy, sx, sy, cur); /* plot apart */
-            dx = Math.floor((w * x1 + x2) * xy + 0.5);dy = Math.floor((y1 * w + y2) * xy + 0.5);
-            _x = sx;
-            _x2 = sy;
-            _x3 = dx;
-            _x4 = dy;
-            _x5 = x2;
-            _x6 = y2;
-            _x7 = cur;
-            _again = true;
-            continue _function;
-         }
-         err = dx + dy - xy; /* error 1st step */
-         do {
-            /* pixel loop */
-            cur = Math.min(dx - xy, xy - dy);ed = Math.max(dx - xy, xy - dy);
-            ed += 2 * ed * cur * cur / (4. * ed * ed + cur * cur); /* approximate error distance */
-            x1 = 255 * Math.abs(err - dx - dy + xy) / ed; /* get blend value by pixel error */
-            if (x1 < 256) setPixelAA(x0, y0, x1); /* plot curve */
-            if (f = 2 * err + dy < 0) {
-               /* y step */
-               if (y0 == y2) return; /* last pixel -> curve finished */
-               if (dx - err < ed) setPixelAA(x0 + sx, y0, 255 * Math.abs(dx - err) / ed);
-            }
-            if (2 * err + dx > 0) {
-               /* x step */
-               if (x0 == x2) return; /* last pixel -> curve finished */
-               if (err - dy < ed) setPixelAA(x0, y0 + sy, 255 * Math.abs(err - dy) / ed);
-               x0 += sx;dx += xy;err += dy += yy;
-            }
-            if (f) {
-               y0 += sy;dy += xy;err += dx += xx;
-            } /* y step */
-         } while (dy < dx); /* gradient negates -> algorithm fails */
+   if (cur != 0.0 && w > 0.0) {
+      /* no straight line */
+      if (sx * sx + sy * sy > xx * xx + yy * yy) {
+         /* begin with shorter part */
+         x2 = x0;x0 -= dx;y2 = y0;y0 -= dy;cur = -cur; /* swap P0 P2 */
       }
-      plotLineAA(x0, y0, x2, y2); /* plot remaining needle to end */
+      xx = 2.0 * (4.0 * w * sx * xx + dx * dx); /* differences 2nd degree */
+      yy = 2.0 * (4.0 * w * sy * yy + dy * dy);
+      sx = x0 < x2 ? 1 : -1; /* x step direction */
+      sy = y0 < y2 ? 1 : -1; /* y step direction */
+      xy = -2.0 * sx * sy * (2.0 * w * xy + dx * dy);
+
+      if (cur * sx * sy < 0) {
+         /* negated curvature? */
+         xx = -xx;yy = -yy;cur = -cur;xy = -xy;
+      }
+      dx = 4.0 * w * (x1 - x0) * sy * cur + xx / 2.0 + xy; /* differences 1st degree */
+      dy = 4.0 * w * (y0 - y1) * sx * cur + yy / 2.0 + xy;
+
+      if (w < 0.5 && dy > dx) {
+         /* flat ellipse, algorithm fails */
+         cur = (w + 1.0) / 2.0;w = Math.sqrt(w);xy = 1.0 / (w + 1.0);
+         sx = Math.floor((x0 + 2.0 * w * x1 + x2) * xy / 2.0 + 0.5); /* subdivide curve */
+         sy = Math.floor((y0 + 2.0 * w * y1 + y2) * xy / 2.0 + 0.5);
+         dx = Math.floor((w * x1 + x0) * xy + 0.5);dy = Math.floor((y1 * w + y0) * xy + 0.5);
+         plotQuadRationalBezierSegAA(x0, y0, dx, dy, sx, sy, cur); /* plot apart */
+         dx = Math.floor((w * x1 + x2) * xy + 0.5);dy = Math.floor((y1 * w + y2) * xy + 0.5);
+         return plotQuadRationalBezierSegAA(sx, sy, dx, dy, x2, y2, cur);
+      }
+      err = dx + dy - xy; /* error 1st step */
+      do {
+         /* pixel loop */
+         cur = Math.min(dx - xy, xy - dy);ed = Math.max(dx - xy, xy - dy);
+         ed += 2 * ed * cur * cur / (4. * ed * ed + cur * cur); /* approximate error distance */
+         x1 = 255 * Math.abs(err - dx - dy + xy) / ed; /* get blend value by pixel error */
+         if (x1 < 256) setPixelAA(x0, y0, x1); /* plot curve */
+         if (f = 2 * err + dy < 0) {
+            /* y step */
+            if (y0 == y2) return; /* last pixel -> curve finished */
+            if (dx - err < ed) setPixelAA(x0 + sx, y0, 255 * Math.abs(dx - err) / ed);
+         }
+         if (2 * err + dx > 0) {
+            /* x step */
+            if (x0 == x2) return; /* last pixel -> curve finished */
+            if (err - dy < ed) setPixelAA(x0, y0 + sy, 255 * Math.abs(err - dy) / ed);
+            x0 += sx;dx += xy;err += dy += yy;
+         }
+         if (f) {
+            y0 += sy;dy += xy;err += dx += xx;
+         } /* y step */
+      } while (dy < dx); /* gradient negates -> algorithm fails */
    }
+   plotLineAA(x0, y0, x2, y2); /* plot remaining needle to end */
 }
 
 function plotQuadRationalBezierAA(x0, y0, x1, y1, x2, y2, w) {
@@ -1055,12 +1033,12 @@ function plotCubicBezierAA(x0, y0, x1, y1, x2, y2, x3, y3) {
          t1 = (yb - t2) / ya;if (Math.abs(t1) < 1.0) t[n++] = t1;
          t1 = (yb + t2) / ya;if (Math.abs(t1) < 1.0) t[n++] = t1;
       }
-   for (i = 1; i < n; i++) /* bubble sort of 4 points */
-   if ((t1 = t[i - 1]) > t[i]) {
-      t[i - 1] = t[i];t[i] = t1;i = 0;
-   }
-
-   t1 = -1.0;t[n] = 1.0; /* begin / end point */
+   for (i = 1; i < n; i++) {
+      /* bubble sort of 4 points */
+      if ((t1 = t[i - 1]) > t[i]) {
+         t[i - 1] = t[i];t[i] = t1;i = 0;
+      }
+   }t1 = -1.0;t[n] = 1.0; /* begin / end point */
    for (i = 0; i <= n; i++) {
       /* plot each segment separately */
       t2 = t[i]; /* sub-divide at t[i-1], t[i] */
@@ -1101,7 +1079,9 @@ function plotLineWidth(x0, y0, x1, y1, th) {
       err = x1 * dy - th / 2; /* shift error value to offset width */
       for (x0 -= x1 * sx;; y0 += sy) {
          setPixelAA(x1 = x0, y0, err); /* aliasing pre-pixel */
-         for (e2 = dy - err - th; e2 + dy < 255; e2 += dy) setPixel(x1 += sx, y0); /* pixel on the line */
+         for (e2 = dy - err - th; e2 + dy < 255; e2 += dy) {
+            setPixel(x1 += sx, y0);
+         } /* pixel on the line */
          setPixelAA(x1 + sx, y0, e2); /* aliasing post-pixel */
          if (y0 == y1) break;
          err += dx; /* y-step */
@@ -1115,7 +1095,9 @@ function plotLineWidth(x0, y0, x1, y1, th) {
          err = y1 * dx - th / 2; /* shift error value to offset width */
          for (y0 -= y1 * sy;; x0 += sx) {
             setPixelAA(x0, y1 = y0, err); /* aliasing pre-pixel */
-            for (e2 = dx - err - th; e2 + dx < 255; e2 += dx) setPixel(x0, y1 += sy); /* pixel on the line */
+            for (e2 = dx - err - th; e2 + dx < 255; e2 += dx) {
+               setPixel(x0, y1 += sy);
+            } /* pixel on the line */
             setPixelAA(x0, y1 + sy, e2); /* aliasing post-pixel */
             if (x0 == x1) break;
             err += dy; /* x-step */
@@ -1207,74 +1189,53 @@ function plotEllipseRectWidth(x0, y0, x1, y1, th) {
    }
 }
 
-function plotQuadRationalBezierWidthSeg(_x8, _x9, _x10, _x11, _x12, _x13, _x14, _x15) {
-   var _again2 = true;
+function plotQuadRationalBezierWidthSeg(x0, y0, x1, y1, x2, y2, w, th) {
+   /* plot a limited rational Bezier segment of thickness th, squared weight */
+   var sx = x2 - x1,
+       sy = y2 - y1; /* relative values for checks */
+   var dx = x0 - x2,
+       dy = y0 - y2,
+       xx = x0 - x1,
+       yy = y0 - y1;
+   var xy = xx * sy + yy * sx,
+       cur = xx * sy - yy * sx,
+       err,
+       e2,
+       ed; /* curvature */
 
-   _function2: while (_again2) {
-      var x0 = _x8,
-          y0 = _x9,
-          x1 = _x10,
-          y1 = _x11,
-          x2 = _x12,
-          y2 = _x13,
-          w = _x14,
-          th = _x15;
-      sx = sy = dx = dy = xx = yy = xy = cur = err = e2 = ed = undefined;
-      _again2 = false;
-      /* plot a limited rational Bezier segment of thickness th, squared weight */
-      var sx = x2 - x1,
-          sy = y2 - y1; /* relative values for checks */
-      var dx = x0 - x2,
-          dy = y0 - y2,
-          xx = x0 - x1,
-          yy = y0 - y1;
-      var xy = xx * sy + yy * sx,
-          cur = xx * sy - yy * sx,
-          err,
-          e2,
-          ed; /* curvature */
+   assert(xx * sx <= 0.0 && yy * sy <= 0.0); /* sign of gradient must not change */
 
-      assert(xx * sx <= 0.0 && yy * sy <= 0.0); /* sign of gradient must not change */
+   if (cur != 0.0 && w > 0.0) {
+      /* no straight line */
+      if (sx * sx + sy * sy > xx * xx + yy * yy) {
+         /* begin with longer part */
+         x2 = x0;x0 -= dx;y2 = y0;y0 -= dy;cur = -cur; /* swap P0 P2 */
+      }
+      xx = 2.0 * (4.0 * w * sx * xx + dx * dx); /* differences 2nd degree */
+      yy = 2.0 * (4.0 * w * sy * yy + dy * dy);
+      sx = x0 < x2 ? 1 : -1; /* x step direction */
+      sy = y0 < y2 ? 1 : -1; /* y step direction */
+      xy = -2.0 * sx * sy * (2.0 * w * xy + dx * dy);
 
-      if (cur != 0.0 && w > 0.0) {
-         /* no straight line */
-         if (sx * sx + sy * sy > xx * xx + yy * yy) {
-            /* begin with longer part */
-            x2 = x0;x0 -= dx;y2 = y0;y0 -= dy;cur = -cur; /* swap P0 P2 */
-         }
-         xx = 2.0 * (4.0 * w * sx * xx + dx * dx); /* differences 2nd degree */
-         yy = 2.0 * (4.0 * w * sy * yy + dy * dy);
-         sx = x0 < x2 ? 1 : -1; /* x step direction */
-         sy = y0 < y2 ? 1 : -1; /* y step direction */
-         xy = -2.0 * sx * sy * (2.0 * w * xy + dx * dy);
+      if (cur * sx * sy < 0) {
+         /* negated curvature? */
+         xx = -xx;yy = -yy;cur = -cur;xy = -xy;
+      }
+      dx = 4.0 * w * (x1 - x0) * sy * cur + xx / 2.0; /* differences 1st degree */
+      dy = 4.0 * w * (y0 - y1) * sx * cur + yy / 2.0;
 
-         if (cur * sx * sy < 0) {
-            /* negated curvature? */
-            xx = -xx;yy = -yy;cur = -cur;xy = -xy;
-         }
-         dx = 4.0 * w * (x1 - x0) * sy * cur + xx / 2.0; /* differences 1st degree */
-         dy = 4.0 * w * (y0 - y1) * sx * cur + yy / 2.0;
-
-         if (w < 0.5 && (dx + xx <= 0 || dy + yy >= 0)) {
-            /* flat ellipse, algo fails */
-            cur = (w + 1.0) / 2.0;w = fsqrt(w);xy = 1.0 / (w + 1.0);
-            sx = Math.floor((x0 + 2.0 * w * x1 + x2) * xy / 2.0 + 0.5); /* subdivide curve  */
-            sy = Math.floor((y0 + 2.0 * w * y1 + y2) * xy / 2.0 + 0.5); /* plot separately */
-            dx = Math.floor((w * x1 + x0) * xy + 0.5);dy = Math.floor((y1 * w + y0) * xy + 0.5);
-            plotQuadRationalBezierWidthSeg(x0, y0, dx, dy, sx, sy, cur, th);
-            dx = Math.floor((w * x1 + x2) * xy + 0.5);dy = Math.floor((y1 * w + y2) * xy + 0.5);
-            _x8 = sx;
-            _x9 = sy;
-            _x10 = dx;
-            _x11 = dy;
-            _x12 = x2;
-            _x13 = y2;
-            _x14 = cur;
-            _x15 = th;
-            _again2 = true;
-            continue _function2;
-         }
-         fail: for (err = 0; dy + 2 * yy < 0 && dx + 2 * xx > 0;) /* loop of steep/flat curve */
+      if (w < 0.5 && (dx + xx <= 0 || dy + yy >= 0)) {
+         /* flat ellipse, algo fails */
+         cur = (w + 1.0) / 2.0;w = fsqrt(w);xy = 1.0 / (w + 1.0);
+         sx = Math.floor((x0 + 2.0 * w * x1 + x2) * xy / 2.0 + 0.5); /* subdivide curve  */
+         sy = Math.floor((y0 + 2.0 * w * y1 + y2) * xy / 2.0 + 0.5); /* plot separately */
+         dx = Math.floor((w * x1 + x0) * xy + 0.5);dy = Math.floor((y1 * w + y0) * xy + 0.5);
+         plotQuadRationalBezierWidthSeg(x0, y0, dx, dy, sx, sy, cur, th);
+         dx = Math.floor((w * x1 + x2) * xy + 0.5);dy = Math.floor((y1 * w + y2) * xy + 0.5);
+         return plotQuadRationalBezierWidthSeg(sx, sy, dx, dy, x2, y2, cur, th);
+      }
+      fail: for (err = 0; dy + 2 * yy < 0 && dx + 2 * xx > 0;) {
+         /* loop of steep/flat curve */
          if (dx + dy + xy < 0) {
             /* steep curve */
             do {
@@ -1284,7 +1245,9 @@ function plotQuadRationalBezierWidthSeg(_x8, _x9, _x10, _x11, _x12, _x13, _x14, 
                e2 = err - x1 * dy - w / 2; /* error value at offset */
                x1 = x0 - x1 * sx; /* start point */
                setPixelAA(x1, y0, 255 * e2 / ed); /* aliasing pre-pixel */
-               for (e2 = -w - dy - e2; e2 - dy < ed; e2 -= dy) setPixel(x1 += sx, y0); /* pixel on thick line */
+               for (e2 = -w - dy - e2; e2 - dy < ed; e2 -= dy) {
+                  setPixel(x1 += sx, y0);
+               } /* pixel on thick line */
                setPixelAA(x1 + sx, y0, 255 * e2 / ed); /* aliasing post-pixel */
                if (y0 == y2) return; /* last pixel -> curve finished */
                y0 += sy;dy += xy;err += dx;dx += xx; /* y step */
@@ -1296,7 +1259,9 @@ function plotQuadRationalBezierWidthSeg(_x8, _x9, _x10, _x11, _x12, _x13, _x14, 
             } while (dx + dy + xy < 0); /* gradient still steep? */
             /* change from steep to flat curve */
             for (cur = err - dy - w / 2, y1 = y0; cur < ed; y1 += sy, cur += dx) {
-               for (e2 = cur, x1 = x0; e2 - dy < ed; e2 -= dy) setPixel(x1 -= sx, y1); /* pixel on thick line */
+               for (e2 = cur, x1 = x0; e2 - dy < ed; e2 -= dy) {
+                  setPixel(x1 -= sx, y1);
+               } /* pixel on thick line */
                setPixelAA(x1 - sx, y1, 255 * e2 / ed); /* aliasing post-pixel */
             }
          } else {
@@ -1308,7 +1273,9 @@ function plotQuadRationalBezierWidthSeg(_x8, _x9, _x10, _x11, _x12, _x13, _x14, 
                   e2 = y1 * dx - w / 2 - err; /* error value at offset */
                   y1 = y0 - y1 * sy; /* start point */
                   setPixelAA(x0, y1, 255 * e2 / ed); /* aliasing pre-pixel */
-                  for (e2 = dx - e2 - w; e2 + dx < ed; e2 += dx) setPixel(x0, y1 += sy); /* pixel on thick line */
+                  for (e2 = dx - e2 - w; e2 + dx < ed; e2 += dx) {
+                     setPixel(x0, y1 += sy);
+                  } /* pixel on thick line */
                   setPixelAA(x0, y1 + sy, 255 * e2 / ed); /* aliasing post-pixel */
                   if (x0 == x2) return; /* last pixel -> curve finished */
                   x0 += sx;dx += xy;err += dy;dy += yy; /* x step */
@@ -1320,13 +1287,15 @@ function plotQuadRationalBezierWidthSeg(_x8, _x9, _x10, _x11, _x12, _x13, _x14, 
                } while (dx + dy + xy >= 0); /* gradient still flat? */
                /* change from flat to steep curve */
                for (cur = -err + dx - w / 2, x1 = x0; cur < ed; x1 += sx, cur -= dy) {
-                  for (e2 = cur, y1 = y0; e2 + dx < ed; e2 += dx) setPixel(x1, y1 -= sy); /* pixel on thick line */
+                  for (e2 = cur, y1 = y0; e2 + dx < ed; e2 += dx) {
+                     setPixel(x1, y1 -= sy);
+                  } /* pixel on thick line */
                   setPixelAA(x1, y1 - sy, 255 * e2 / ed); /* aliasing post-pixel */
                }
             }
       }
-      plotLineWidth(x0, y0, x2, y2, th); /* confusing error values  */
    }
+   plotLineWidth(x0, y0, x2, y2, th); /* confusing error values  */
 }
 
 function plotQuadRationalBezierWidth(x0, y0, x1, y1, x2, y2, w, th) {
@@ -1462,12 +1431,12 @@ function plotCubicBezierWidth(x0, y0, x1, y1, x2, y2, x3, y3, th) {
       t[n] = (t2 + i) / t1;if (Math.abs(t[n]) < 1.0) n++;
       t[n] = (t2 - i) / t1;if (Math.abs(t[n]) < 1.0) n++;
    }
-   for (i = 1; i < n; i++) /* bubble sort of 4 points */
-   if ((t1 = t[i - 1]) > t[i]) {
-      t[i - 1] = t[i];t[i] = t1;i = 0;
-   }
-
-   t1 = -1.0;t[n] = 1.0; /* begin / end points */
+   for (i = 1; i < n; i++) {
+      /* bubble sort of 4 points */
+      if ((t1 = t[i - 1]) > t[i]) {
+         t[i - 1] = t[i];t[i] = t1;i = 0;
+      }
+   }t1 = -1.0;t[n] = 1.0; /* begin / end points */
    for (i = 0; i <= n; i++) {
       /* plot each segment separately */
       t2 = t[i]; /* sub-divide at t[i-1], t[i] */

@@ -1,9 +1,3 @@
-/**
- * @class       Point
- * @description Create 2D point. This object does not conform to the underscore
- *              prefixed private property paradigm.
- * @author      Chris Peters
- */
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11,6 +5,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @class       Point
+ * @description Create 2D point. This object does not conform to the underscore
+ *              prefixed private property paradigm.
+ * @author      Chris Peters
+ */
 
 var Point =
 /**
@@ -25,5 +26,4 @@ function Point(x, y) {
   this.y = y || 0;
 };
 
-exports["default"] = Point;
-module.exports = exports["default"];
+exports.default = Point;
