@@ -1,8 +1,8 @@
-import Config from '../../../../dist/Config'
-import Viewport from '../../../../dist/Viewport';
-import Point from '../../../../dist/Point';
-import Block from '../../../../dist/draw/Block';
-import Line from '../../../../dist/draw/Line';
+import Config from '../../../nbit/Config'
+import Viewport from '../../../nbit/Viewport';
+import Point from '../../../nbit/Point';
+import Block from '../../../nbit/draw/Block';
+import Line from '../../../nbit/draw/Line';
 
 let config = new Config();
 let viewport = new Viewport({config});

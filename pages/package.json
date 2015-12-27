@@ -4,7 +4,8 @@
   "description": "Docs and examples for the nbit game framework",
   "main": "index.html",
   "scripts": {
-    "serve": "open -a \"Google Chrome\" \"http://localhost:3000/\"; node server.js"
+    "serve": "open -a \"Google Chrome\" \"http://localhost:3000/\"; node server.js",
+    "build": "./node_modules/.bin/gulp babel"
   },
   "author": "Chris Peters",
   "license": "ISC",

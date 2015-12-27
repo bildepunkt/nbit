@@ -9,8 +9,9 @@
   ],
   "main": "index.js",
   "scripts": {
-    "xpile": "./node_modules/.bin/babel src --out-dir dist",
-    "test": "./node_modules/.bin/jasmine"
+    "build": "./node_modules/.bin/babel src --out-dir dist && cp -r ./dist/ ./pages/nbit/;",
+    "test": "./node_modules/.bin/jasmine",
+    "clean": "rm -rf ./dist/ && mkdir ./dist/ && rm -rf ./pages/nbit/ && mkdir ./pages/nbit/;"
   },
   "repository": {
     "type": "git",
