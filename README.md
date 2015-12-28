@@ -5,15 +5,12 @@ nbit
 
 nbit allows you to create retro 8, 16, however-many-bit style games quickly and easily. Just feed a 2D array or point cloud into nbit's engine and you have a procedural, pixellated graphics asset for your game!
 
-#### Transpile and build source
-Transpile the es6 source with Babel
-
-    npm run-script build
-
-#### Run Tests
+#### test nbit's source
+err... Coming soon
 
     npm run-script test
 
-## nbit pages
+#### muck around with nbit in the playground
+Want to play with nbit? No? Get out. Otherwise, cd into ```pages/playground```, kick off the watch, and have at 'er in ```main.js```. Now with sourcemaps!
 
-Check out the nbit examples and docs here.
+    npm run-script watch-pg

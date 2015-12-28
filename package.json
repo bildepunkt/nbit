@@ -11,7 +11,6 @@
   ],
   "main": "index.js",
   "scripts": {
-    "build": "./node_modules/.bin/babel src --out-dir dist && cp -r ./dist/ ./pages/nbit/",
     "watch": "./node_modules/.bin/babel src --watch --out-dir dist",
     "test": "./node_modules/.bin/jasmine",
     "clean": "rm -rf ./dist/ && mkdir ./dist/"
