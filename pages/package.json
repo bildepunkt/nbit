@@ -4,28 +4,15 @@
   "description": "Docs and examples for the nbit game framework",
   "main": "index.html",
   "scripts": {
-    "serve": "open -a \"Google Chrome\" \"http://localhost:3000/\"; node server.js",
-    "build": "./node_modules/.bin/gulp babel"
+    "watch-pg": "watchify playground/main.js -o playground/bundle.js -t [ babelify --presets [ es2015 ] --sourceMap ] -d | exorcist playground/bundle.js.map > playground/bundle.js"
   },
   "author": "Chris Peters",
   "license": "ISC",
-  "dependencies": {
-    "prismjs": "1.3.0",
-    "finalhandler": "0.4.0",
-    "httpdispatcher": "0.4.0",
-    "serve-static": "1.10.0"
-  },
   "devDependencies": {
     "babel-preset-es2015": "6.3.13",
     "babelify": "7.2.0",
     "browserify": "12.0.1",
-    "gulp": "3.9.0",
-    "gulp-concat": "2.6.0",
-    "gulp-rename": "1.2.2",
-    "gulp-sass": "2.1.1",
-    "gulp-sourcemaps": "1.6.0",
-    "gulp-util": "3.0.7",
-    "vinyl-buffer": "1.0.0",
-    "vinyl-source-stream": "1.1.0"
+    "exorcist": "^0.4.0",
+    "watchify": "3.6.1"
   }
 }

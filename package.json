@@ -5,14 +5,16 @@
   "keywords": [
     "canvas",
     "game",
-    "retro"
+    "retro",
+    "pixelated",
+    "sprite"
   ],
   "main": "index.js",
   "scripts": {
     "build": "./node_modules/.bin/babel src --out-dir dist && cp -r ./dist/ ./pages/nbit/",
     "watch": "./node_modules/.bin/babel src --watch --out-dir dist",
     "test": "./node_modules/.bin/jasmine",
-    "clean": "rm -rf ./dist/ && mkdir ./dist/ && rm -rf ./pages/nbit/ && mkdir ./pages/nbit/"
+    "clean": "rm -rf ./dist/ && mkdir ./dist/"
   },
   "repository": {
     "type": "git",

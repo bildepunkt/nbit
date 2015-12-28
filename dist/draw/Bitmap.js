@@ -73,7 +73,7 @@ var Bitmap = (function (_Sprite) {
                 for (var x = 0, lenx = mapy.length; x < lenx; x++) {
                     mapx = mapy[x];
 
-                    _Block2.default.render(x - offset.x, y - offset.y, mapx);
+                    _Block2.default.render(x - offset.x, y - offset.y, mapx, this);
                 }
             }
         }

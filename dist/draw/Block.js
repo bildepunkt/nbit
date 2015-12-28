@@ -35,23 +35,51 @@ var Block = (function () {
                 y: Math.round(y) * size - size / 2
             };
         }
+    }, {
+        key: '_setSpriteProperties',
+        value: function _setSpriteProperties(sprite) {
+            if (sprite.getX() != 0 || sprite.getY() != 0) {
+                Block._context.translate(sprite.getX(), sprite.getY());
+            }
+
+            if (sprite.getScaleX() != 1 || sprite.getScaleY() != 1) {
+                Block._context.scale(sprite.getScaleX(), sprite.getScaleY());
+            }
+
+            if (sprite.getRotation() != 0) {
+                Block._context.rotate(sprite.getRotation());
+            }
+
+            if (sprite.getOpacity() < 1) {
+                Block.globalAlpha = sprite.getOpacity();
+            }
+
+            if (sprite.getComposite() != 'source-over') {
+                Block.globalCompositeOperation = sprite.getComposite();
+            }
+        }
 
         /**
          * Renders a block to the canvas
          *
-         * @param {Object} context The canvas' 2d context object
+         *
          */
 
     }, {
         key: 'render',
-        value: function render(x, y, color) {
+        value: function render(x, y, color, sprite) {
             if (!Block._context || !Block._blockSize) {
-                throw new Error('Block requires a context and size');
+                throw new Error('Block requires both context and blockSize');
             }
 
             var offset = this._getPixelOffset(x, y, this._blockSize);
 
             Block._context.save();
+
+            if (sprite) {
+                this._setSpriteProperties(sprite);
+            }
+
             Block._context.fillStyle = color;
             Block._context.fillRect(offset.x, offset.y, this._blockSize, this._blockSize);
             Block._context.restore();
