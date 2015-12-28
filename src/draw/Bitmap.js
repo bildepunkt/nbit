@@ -22,7 +22,7 @@ export default class Bitmap extends Sprite {
         return {
             x: lenx / 2,
             y: leny / 2
-        }
+        };
     }
 
     setMap(map) {
@@ -41,7 +41,7 @@ export default class Bitmap extends Sprite {
             for (let x = 0, lenx = mapy.length; x < lenx; x++) {
                 mapx = mapy[x];
 
-                Block.render(x - offset.x, y - offset.y, mapx);
+                Block.render(x - offset.x, y - offset.y, mapx, this);
             }
         }
     }
