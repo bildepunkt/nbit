@@ -9,9 +9,10 @@
   ],
   "main": "index.js",
   "scripts": {
-    "build": "./node_modules/.bin/babel src --out-dir dist && cp -r ./dist/ ./pages/nbit/;",
+    "build": "./node_modules/.bin/babel src --out-dir dist && cp -r ./dist/ ./pages/nbit/",
+    "watch": "./node_modules/.bin/babel src --watch --out-dir dist",
     "test": "./node_modules/.bin/jasmine",
-    "clean": "rm -rf ./dist/ && mkdir ./dist/ && rm -rf ./pages/nbit/ && mkdir ./pages/nbit/;"
+    "clean": "rm -rf ./dist/ && mkdir ./dist/ && rm -rf ./pages/nbit/ && mkdir ./pages/nbit/"
   },
   "repository": {
     "type": "git",
@@ -23,8 +24,8 @@
   "author": "Chris Peters",
   "license": "ISC",
   "devDependencies": {
-    "babel-cli": "^6.3.17",
-    "babel-preset-es2015": "^6.3.13",
-    "jasmine": "^2.4.1"
+    "babel-cli": "6.3.17",
+    "babel-preset-es2015": "6.3.13",
+    "jasmine": "2.4.1"
   }
 }

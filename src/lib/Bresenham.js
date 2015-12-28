@@ -2,6 +2,7 @@
  * @class       Bresenham
  * @description Bresenham's formulae for calculating blocks from curves, between points etc.
  * @author      Chris Peters
+ * @reference   http://rosettacode.org/wiki/Bitmap/Bresenham's_line_algorithm
  */
 export default class Bresenham {
     /**
@@ -36,5 +37,13 @@ export default class Bresenham {
                 ptA.y += sy;
             }
         }
+    }
+
+    /**
+     * [plotEllipse description]
+     * @return {[type]} [description]
+     */
+    static plotEllipse() {
+
     }
 }

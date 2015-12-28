@@ -1,8 +1,9 @@
+import Sprite from '../dist/Sprite';
+
 /**
  *
  */
 describe('Sprite', function() {
-    import Sprite from '../dist/Sprite';
     var point;
 
     beforeEach(function () {

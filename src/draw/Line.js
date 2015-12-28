@@ -16,9 +16,7 @@ export default class Line {
      * @param {Object}  deps.context The canvas' 2d context
      * @param {String}  [color]      Initial color
      */
-    constructor(deps, color) {
-        this._config = deps.config;
-
+    constructor(color) {
         this._points = [];
         this._color = color || '#000';
     }
@@ -26,11 +24,12 @@ export default class Line {
     /**
      * The wrapper method to pass to Bresenham.plotLine
      *
+     * @private
      * @param  {[type]} x [description]
      * @param  {[type]} y [description]
      */
     _plot(x, y) {
-        Block.render(x, y, this._color, this._config.blockSize, this._context);
+        Block.render(x, y, this._color);
     }
 
     /**

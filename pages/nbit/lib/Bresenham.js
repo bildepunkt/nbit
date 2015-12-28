@@ -12,6 +12,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * @class       Bresenham
  * @description Bresenham's formulae for calculating blocks from curves, between points etc.
  * @author      Chris Peters
+ * @reference   http://rosettacode.org/wiki/Bitmap/Bresenham's_line_algorithm
  */
 
 var Bresenham = (function () {
@@ -56,6 +57,15 @@ var Bresenham = (function () {
                 }
             }
         }
+
+        /**
+         * [plotEllipse description]
+         * @return {[type]} [description]
+         */
+
+    }, {
+        key: "plotEllipse",
+        value: function plotEllipse() {}
     }]);
 
     return Bresenham;

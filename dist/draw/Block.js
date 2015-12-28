@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -10,7 +10,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @class       draw.Block
- * @description 2D point with color data
+ * @description 2D point with color data. Used to render all nbit display objects
  * @author      Chris Peters
  */
 
@@ -20,7 +20,7 @@ var Block = (function () {
     }
 
     _createClass(Block, null, [{
-        key: "_getPixelOffset",
+        key: '_getPixelOffset',
 
         /**
          * [getPointOffset description]
@@ -43,19 +43,30 @@ var Block = (function () {
          */
 
     }, {
-        key: "render",
-        value: function render(x, y, color, size) {
-            var offset = this._getPixelOffset(x, y, size);
+        key: 'render',
+        value: function render(x, y, color) {
+            if (!Block._context || !Block._blockSize) {
+                throw new Error('Block requires a context and size');
+            }
+
+            var offset = this._getPixelOffset(x, y, this._blockSize);
 
             Block._context.save();
             Block._context.fillStyle = color;
-            Block._context.fillRect(offset.x, offset.y, size, size);
+            Block._context.fillRect(offset.x, offset.y, this._blockSize, this._blockSize);
             Block._context.restore();
         }
     }, {
-        key: "setContext",
+        key: 'setContext',
         value: function setContext(context) {
             Block._context = context;
+
+            return this;
+        }
+    }, {
+        key: 'setBlockSize',
+        value: function setBlockSize(size) {
+            Block._blockSize = size;
 
             return this;
         }
@@ -70,3 +81,4 @@ var Block = (function () {
 
 exports.default = Block;
 Block._context = null;
+Block._blockSize = null;

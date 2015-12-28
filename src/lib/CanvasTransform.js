@@ -1,5 +1,6 @@
 /*
- * Transform tracker
+ * @class CanvasTransform
+ * @author Chris Peters
  * Based on a class created by Simon Sarris - www.simonsarris.com - sarris@acm.org
  */
 export default class CanvasTransform {
@@ -12,7 +13,6 @@ export default class CanvasTransform {
     //==========================================
     // Constructor, getter/setter
     //==========================================
-
     setContext(context) {
         this.context = context;
     }
@@ -33,9 +33,8 @@ export default class CanvasTransform {
     //==========================================
     // Stack
     //==========================================
-
     save() {
-        var matrix = this.cloneMatrix(this.getMatrix());
+        let matrix = this.cloneMatrix(this.getMatrix());
         this.stack.push(matrix);
 
         this.context.save();
@@ -43,7 +42,7 @@ export default class CanvasTransform {
 
     restore() {
         if (this.stack.length > 0) {
-            var matrix = this.stack.pop();
+            let matrix = this.stack.pop();
             this.setMatrix(matrix);
         }
 
@@ -53,7 +52,6 @@ export default class CanvasTransform {
     //==========================================
     // Matrix
     //==========================================
-
     setTransform() {
         if (this.context) {
             this.context.setTransform(
@@ -75,12 +73,12 @@ export default class CanvasTransform {
     }
 
     rotate(rad) {
-        var c = Math.cos(rad);
-        var s = Math.sin(rad);
-        var m11 = this.matrix[0] * c + this.matrix[2] * s;
-        var m12 = this.matrix[1] * c + this.matrix[3] * s;
-        var m21 = this.matrix[0] * -s + this.matrix[2] * c;
-        var m22 = this.matrix[1] * -s + this.matrix[3] * c;
+        let c = Math.cos(rad);
+        let s = Math.sin(rad);
+        let m11 = this.matrix[0] * c + this.matrix[2] * s;
+        let m12 = this.matrix[1] * c + this.matrix[3] * s;
+        let m21 = this.matrix[0] * -s + this.matrix[2] * c;
+        let m22 = this.matrix[1] * -s + this.matrix[3] * c;
         this.matrix[0] = m11;
         this.matrix[1] = m12;
         this.matrix[2] = m21;
@@ -101,9 +99,8 @@ export default class CanvasTransform {
     //==========================================
     // Matrix extensions
     //==========================================
-
     rotateDegrees(deg) {
-        var rad = deg * Math.PI / 180;
+        let rad = deg * Math.PI / 180;
         this.rotate(rad);
     }
 
@@ -127,14 +124,14 @@ export default class CanvasTransform {
     }
 
     multiply(matrix) {
-        var m11 = this.matrix[0] * matrix.m[0] + this.matrix[2] * matrix.m[1];
-        var m12 = this.matrix[1] * matrix.m[0] + this.matrix[3] * matrix.m[1];
+        let m11 = this.matrix[0] * matrix.m[0] + this.matrix[2] * matrix.m[1];
+        let m12 = this.matrix[1] * matrix.m[0] + this.matrix[3] * matrix.m[1];
 
-        var m21 = this.matrix[0] * matrix.m[2] + this.matrix[2] * matrix.m[3];
-        var m22 = this.matrix[1] * matrix.m[2] + this.matrix[3] * matrix.m[3];
+        let m21 = this.matrix[0] * matrix.m[2] + this.matrix[2] * matrix.m[3];
+        let m22 = this.matrix[1] * matrix.m[2] + this.matrix[3] * matrix.m[3];
 
-        var dx = this.matrix[0] * matrix.m[4] + this.matrix[2] * matrix.m[5] + this.matrix[4];
-        var dy = this.matrix[1] * matrix.m[4] + this.matrix[3] * matrix.m[5] + this.matrix[5];
+        let dx = this.matrix[0] * matrix.m[4] + this.matrix[2] * matrix.m[5] + this.matrix[4];
+        let dy = this.matrix[1] * matrix.m[4] + this.matrix[3] * matrix.m[5] + this.matrix[5];
 
         this.matrix[0] = m11;
         this.matrix[1] = m12;
@@ -146,13 +143,13 @@ export default class CanvasTransform {
     }
 
     invert() {
-        var d = 1 / (this.matrix[0] * this.matrix[3] - this.matrix[1] * this.matrix[2]);
-        var m0 = this.matrix[3] * d;
-        var m1 = -this.matrix[1] * d;
-        var m2 = -this.matrix[2] * d;
-        var m3 = this.matrix[0] * d;
-        var m4 = d * (this.matrix[2] * this.matrix[5] - this.matrix[3] * this.matrix[4]);
-        var m5 = d * (this.matrix[1] * this.matrix[4] - this.matrix[0] * this.matrix[5]);
+        let d = 1 / (this.matrix[0] * this.matrix[3] - this.matrix[1] * this.matrix[2]);
+        let m0 = this.matrix[3] * d;
+        let m1 = -this.matrix[1] * d;
+        let m2 = -this.matrix[2] * d;
+        let m3 = this.matrix[0] * d;
+        let m4 = d * (this.matrix[2] * this.matrix[5] - this.matrix[3] * this.matrix[4]);
+        let m5 = d * (this.matrix[1] * this.matrix[4] - this.matrix[0] * this.matrix[5]);
         this.matrix[0] = m0;
         this.matrix[1] = m1;
         this.matrix[2] = m2;
@@ -165,7 +162,6 @@ export default class CanvasTransform {
     //==========================================
     // Helpers
     //==========================================
-
     transformPoint(x, y) {
         return {
             x: x * this.matrix[0] + y * this.matrix[2] + this.matrix[4],

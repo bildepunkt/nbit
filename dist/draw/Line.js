@@ -35,10 +35,8 @@ var Line = (function () {
      * @param {String}  [color]      Initial color
      */
 
-    function Line(deps, color) {
+    function Line(color) {
         _classCallCheck(this, Line);
-
-        this._config = deps.config;
 
         this._points = [];
         this._color = color || '#000';
@@ -47,6 +45,7 @@ var Line = (function () {
     /**
      * The wrapper method to pass to Bresenham.plotLine
      *
+     * @private
      * @param  {[type]} x [description]
      * @param  {[type]} y [description]
      */
@@ -54,7 +53,7 @@ var Line = (function () {
     _createClass(Line, [{
         key: '_plot',
         value: function _plot(x, y) {
-            _Block2.default.render(x, y, this._color, this._config.blockSize, this._context);
+            _Block2.default.render(x, y, this._color);
         }
 
         /**

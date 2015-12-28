@@ -9,7 +9,8 @@ Object.defineProperty(exports, "__esModule", {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
- * Transform tracker
+ * @class CanvasTransform
+ * @author Chris Peters
  * Based on a class created by Simon Sarris - www.simonsarris.com - sarris@acm.org
  */
 

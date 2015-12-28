@@ -1,6 +1,6 @@
 /**
  * @class       draw.Block
- * @description 2D point with color data
+ * @description 2D point with color data. Used to render all nbit display objects
  * @author      Chris Peters
  */
 export default class Block {
@@ -23,17 +23,27 @@ export default class Block {
      *
      * @param {Object} context The canvas' 2d context object
      */
-    static render(x, y, color, size) {
-        let offset = this._getPixelOffset(x, y, size);
+    static render(x, y, color) {
+        if (!Block._context || !Block._blockSize) {
+            throw new Error('Block requires a context and size');
+        }
+
+        let offset = this._getPixelOffset(x, y, this._blockSize);
 
         Block._context.save();
         Block._context.fillStyle = color;
-        Block._context.fillRect(offset.x, offset.y, size, size);
+        Block._context.fillRect(offset.x, offset.y, this._blockSize, this._blockSize);
         Block._context.restore();
     }
 
     static setContext(context) {
         Block._context = context;
+
+        return this;
+    }
+
+    static setBlockSize(size) {
+        Block._blockSize = size;
 
         return this;
     }
@@ -43,3 +53,4 @@ export default class Block {
  * Static properties
  */
 Block._context = null;
+Block._blockSize = null;
