@@ -1,8 +1,5 @@
-import Block from './Block';
-import Bresenham from '../lib/Bresenham';
-
 /**
- * @class       draw.Sprite
+ * @class       Sprite
  * @description Base class for position based objects
  * @author      Chris Peters
  */
@@ -16,36 +13,61 @@ export default class Sprite {
         this._scaleX = 1;
         this._scaleY = 1;
         this._rotation = 0;
-        this._composite = 'source-over';
+        this._composite = Sprite._compositeDefault;
         this._opacity = 1;
     }
 
+    static getCompositeDefault() {
+        return Sprite._compositeDefault;
+    }
+
+    /**
+     * @return {String}
+     */
     getComposite() {
         return this._composite;
     }
 
+    /**
+     * @return {Float}
+     */
     getOpacity() {
         return this._opacity;
     }
 
+    /**
+     * @return {Float}
+     */
     getRotation() {
         return this._rotation;
     }
 
+    /**
+     * @return {Integer}
+     */
     getScaleX() {
-        return this._scaleX;
+        return Math.round(this._scaleX);
     }
 
+    /**
+     * @return {Integer}
+     */
     getScaleY() {
-        return this._scaleY;
+        return Math.round(this._scaleY);
     }
 
+    /**
+     * @return {Integer}
+     */
     getX() {
-        return this._x;
+        return Math.round(this._x);
     }
 
+    /**
+     * @return {Integer}
+     */
     getY() {
-        return this._y;
+        return Math.round(this._y);
     }
 
     setComposite(val) {
@@ -90,3 +112,6 @@ export default class Sprite {
         return this;
     }
 }
+
+Sprite._compositeDefault = 'source-over';
+

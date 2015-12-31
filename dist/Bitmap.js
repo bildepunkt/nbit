@@ -10,9 +10,9 @@ var _Sprite2 = require('./Sprite');
 
 var _Sprite3 = _interopRequireDefault(_Sprite2);
 
-var _Canvas = require('./Canvas');
+var _Picl = require('./Picl');
 
-var _Canvas2 = _interopRequireDefault(_Canvas);
+var _Picl2 = _interopRequireDefault(_Picl);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23,10 +23,10 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
- * @class       draw.Bitmap
+ * @class       Bitmap
  * @description Maps 2d arrays into blocks
  * @extends     Sprite
- * @requires    Canvas
+ * @requires    Picl
  * @author      Chris Peters
  */
 
@@ -54,7 +54,7 @@ var Bitmap = (function (_Sprite) {
         key: 'render',
         value: function render() {
             var map = this._maps[this._frame],
-                offset = this._getMapOffset(map),
+                picls = [],
                 mapy = undefined,
                 mapx = undefined;
 
@@ -64,9 +64,11 @@ var Bitmap = (function (_Sprite) {
                 for (var x = 0, lenx = mapy.length; x < lenx; x++) {
                     mapx = mapy[x];
 
-                    _Canvas2.default.renderPicl(x - offset.x, y - offset.y, mapx, this);
+                    picls.push(new _Picl2.default(x, y, mapx));
                 }
             }
+
+            return picls;
         }
     }, {
         key: 'setFrame',

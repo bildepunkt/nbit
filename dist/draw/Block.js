@@ -6,107 +6,60 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _Canvas = require('./Canvas');
+
+var _Canvas2 = _interopRequireDefault(_Canvas);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- * @class       draw.Block
- * @description 2D point with color data. Used to render all nbit display objects
+ * @class       draw.Line
+ * @description Plots Blocks between (and at) two Points
+ * @requires    Block
+ * @requires    Bresenham
  * @author      Chris Peters
  */
 
-var Block = (function () {
-    function Block() {
-        _classCallCheck(this, Block);
+var Line = (function () {
+    /**
+     *
+     * @param {Object}  deps         Injected dependencies
+     * @param {Object}  deps.config  Configuration
+     * @param {Object}  deps.context The canvas' 2d context
+     * @param {String}  [color]      Initial color
+     */
+
+    function Line(color) {
+        _classCallCheck(this, Line);
+
+        this._point = null;
+        this._strokeColor = color || '#000';
     }
 
-    _createClass(Block, null, [{
-        key: '_getPixelOffset',
+    /**
+     * Set the line's two points
+     *
+     * @param {[type]} key [description]
+     * @param {[type]} val [description]
+     */
 
-        /**
-         * [getPointOffset description]
-         * @param {Integer} x    The y coord
-         * @param {Integer} y    The x coord
-         * @param {Integer} size The block size
-         * @return {Object}      The Block point offset
-         */
-        value: function _getPixelOffset(x, y, size) {
-            return {
-                x: Math.round(x) * size - size / 2,
-                y: Math.round(y) * size - size / 2
-            };
+    _createClass(Line, [{
+        key: 'setPoint',
+        value: function setPoint(val) {
+            this._point = val;
+
+            return this;
         }
-    }, {
-        key: '_setSpriteProperties',
-        value: function _setSpriteProperties(sprite) {
-            if (sprite.getX() != 0 || sprite.getY() != 0) {
-                Block._context.translate(sprite.getX(), sprite.getY());
-            }
-
-            if (sprite.getScaleX() != 1 || sprite.getScaleY() != 1) {
-                Block._context.scale(sprite.getScaleX(), sprite.getScaleY());
-            }
-
-            if (sprite.getRotation() != 0) {
-                Block._context.rotate(sprite.getRotation());
-            }
-
-            if (sprite.getOpacity() < 1) {
-                Block.globalAlpha = sprite.getOpacity();
-            }
-
-            if (sprite.getComposite() != 'source-over') {
-                Block.globalCompositeOperation = sprite.getComposite();
-            }
-        }
-
-        /**
-         * Renders a block to the canvas
-         *
-         *
-         */
-
     }, {
         key: 'render',
-        value: function render(x, y, color, sprite) {
-            if (!Block._context || !Block._blockSize) {
-                throw new Error('Block requires both context and blockSize');
-            }
-
-            var offset = this._getPixelOffset(x, y, this._blockSize);
-
-            Block._context.save();
-
-            if (sprite) {
-                this._setSpriteProperties(sprite);
-            }
-
-            Block._context.fillStyle = color;
-            Block._context.fillRect(offset.x, offset.y, this._blockSize, this._blockSize);
-            Block._context.restore();
-        }
-    }, {
-        key: 'setContext',
-        value: function setContext(context) {
-            Block._context = context;
-
-            return this;
-        }
-    }, {
-        key: 'setBlockSize',
-        value: function setBlockSize(size) {
-            Block._blockSize = size;
-
-            return this;
+        value: function render() {
+            _Canvas2.default.render(this._point.x, this._point.y, this._strokeColor);
         }
     }]);
 
-    return Block;
+    return Line;
 })();
 
-/**
- * Static properties
- */
-
-exports.default = Block;
-Block._context = null;
-Block._blockSize = null;
+exports.default = Line;

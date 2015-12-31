@@ -16,7 +16,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @class       Canvas
- * @description Creates and handles the canvas DOM element
+ * @description Creates and renders to the canvas DOM element
  * @extends     GetSet
  * @required    MaintainMax
  * @author      Chris Peters
@@ -54,7 +54,7 @@ var Canvas = (function () {
     }
 
     /**
-     * [_handleResize description]
+     * use MaintainMax to fit canvas to resized window
      */
 
     _createClass(Canvas, [{
@@ -74,15 +74,43 @@ var Canvas = (function () {
             this._canvas.style.width = Math.round(width) + 'px';
             this._canvas.style.height = Math.round(height) + 'px';
         }
-
-        /**
-         * @return {Object} The canvas' 2d context object
-         */
-
     }, {
-        key: 'getContext',
-        value: function getContext() {
-            return this._context;
+        key: '_renderPicl',
+        value: function _renderPicl(x, y, color) {
+            this._context.save();
+            this._context.fillStyle = color;
+            this._context.fillRect(x, y, this._config.ppp, this._config.ppp);
+            this._context.restore();
+        }
+    }, {
+        key: 'render',
+        value: function render(object) {
+            var picls = object.render();
+
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = picls[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var picl = _step.value;
+
+                    this._renderPicl(picl.x, picl.y, picl.color);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
         }
     }]);
 

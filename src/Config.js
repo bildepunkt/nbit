@@ -10,7 +10,8 @@ export default class Config {
      * @return {[type]} [description]
      */
     constructor(options) {
-        this.blockSize = 8;
+        // pixels per Picl
+        this.ppp = 8;
         this.viewportWidth = 100;
         this.viewportHeight = 75;
         this.parentEl = document.body;

@@ -8,8 +8,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @class       Point
- * @description Create 2D point. This object does not conform to the underscore
- *              prefixed private property paradigm.
+ * @description Create 2D point. This object does not conform to the
+ *              underscore-prefixed private property paradigm.
  * @author      Chris Peters
  */
 

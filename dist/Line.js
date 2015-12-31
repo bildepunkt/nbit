@@ -6,11 +6,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _Canvas = require('./Canvas');
-
-var _Canvas2 = _interopRequireDefault(_Canvas);
-
-var _Bresenham = require('../lib/Bresenham');
+var _Bresenham = require('./lib/Bresenham');
 
 var _Bresenham2 = _interopRequireDefault(_Bresenham);
 
@@ -20,8 +16,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * @class       draw.Line
- * @description Plots Blocks between (and at) two Points
- * @requires    Canvas
+ * @description Plots Picls between (and at) n Points
  * @requires    Bresenham
  * @author      Chris Peters
  */
@@ -34,12 +29,18 @@ var Line = (function () {
     function Line(color) {
         _classCallCheck(this, Line);
 
-        this._points = [];
+        this._picls = [];
+
+        for (var _len = arguments.length, points = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+            points[_key - 1] = arguments[_key];
+        }
+
+        this._points = [points];
         this._strokeColor = color || '#000';
     }
 
     /**
-     * The wrapper method to pass to Bresenham.plotLine
+     * the Picl-pusher to pass to Bresenham.plotLine
      *
      * @private
      * @param  {[type]} x [description]
@@ -47,32 +48,43 @@ var Line = (function () {
      */
 
     _createClass(Line, [{
-        key: '_plot',
-        value: function _plot(x, y) {
-            _Canvas2.default.renderPicl(x, y, this._strokeColor);
+        key: '_addPicls',
+        value: function _addPicls(x, y) {
+            this._picls.push(new Picl(x, y, this._strokeColor));
         }
 
         /**
          * Set the line's points
          *
-         *
+         * @param {Point} ...points
          */
 
     }, {
         key: 'setPoints',
         value: function setPoints() {
-            this._points = [ptA, ptB];
+            for (var _len2 = arguments.length, points = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                points[_key2] = arguments[_key2];
+            }
+
+            if (points.length < 2) {
+                throw new Error('Line must have at least two points');
+            }
+
+            this._points = [points];
 
             return this;
         }
     }, {
         key: 'render',
         value: function render() {
-            if (this._points[0] && this._points[1]) {
-                _Bresenham2.default.plotLine(this._points[0], this._points[1], this._plot.bind(this));
-            } else {
-                throw new Error('Line must have at least two points');
+            // empty picl array
+            this._picls = [];
+
+            for (var i = 0, len = this._points.length - 1; i < len; i++) {
+                _Bresenham2.default.plotLine(this._points[i], this._points[i + 1], this._addPicls.bind(this));
             }
+
+            return this._picls;
         }
     }]);
 
