@@ -4,25 +4,15 @@
  *              the underscore prefixed private property paradigm.
  * @author      Chris Peters
  */
-export default class Config {
-    /**
-     * [constructor description]
-     * @return {[type]} [description]
-     */
-    constructor(options) {
-        // pixels per Picl
-        this.ppp = 8;
-        this.viewportWidth = 100;
-        this.viewportHeight = 75;
-        this.parentEl = document.body;
-        this.parentElBgColor = '#000';
-        this.canvasBgColor = '#FFF';
-        this.useKeyboard = false;
-        this.useMouse = true;
-        this.useTouch = false;
-
-        for (let key in options) {
-            this[key] = options[key];
-        }
-    }
-}
+export default {
+    // pixels per Picl
+    ppp: 8,
+    viewportWidth: 40,
+    viewportHeight: 30,
+    parentEl: document.body,
+    parentElBgColor: '#000',
+    canvasBgColor: '#FFF',
+    useKeyboard: false,
+    useMouse: true,
+    useTouch: false
+};

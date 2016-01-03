@@ -1,5 +1,5 @@
 import CollisionLib from './lib/Collision';
-import config from '../config';
+import config from './config';
 
 /**
  * @class       Collision
@@ -23,6 +23,6 @@ export default class Collision {
             boundingBox[prop] *= ppp;
         }
 
-        return CollisionLib.hitTest(Math.floor(x) * ppp, Math.floor(y) * ppp, boundingBox);
+        return CollisionLib.hitTest(Math.floor(x), Math.floor(y), boundingBox);
     }
 }

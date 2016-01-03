@@ -1,4 +1,4 @@
-import Config from '../../src/Config';
+import config from '../../src/config';
 import Canvas from '../../src/Canvas';
 import Point from '../../src/Point';
 import Bitmap from '../../src/Bitmap';
@@ -7,19 +7,12 @@ import Collection from '../../src/lib/Collection';
 import CanvasInput from '../../src/lib/CanvasInput';
 import Line from '../../src/Line';
 
-let config = new Config({
-    ppp: 32,
-    viewportWidth: 40,
-    viewportHeight: 30
-});
-let canvas = new Canvas({config});
-
-let collision = new Collision({config});
+let canvas = new Canvas();
 
 let canvasInput = new CanvasInput({
     useMouse: config.useMouse,
     canvas: canvas.getEl(),
-    hitTestMethod: collision.hitTest,
+    hitTestMethod: Collision.hitTest,
     canvasFit: true
 });
 

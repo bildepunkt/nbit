@@ -1,5 +1,6 @@
 import MaintainMax from './lib/MaintainMax';
 import Sprite from './Sprite';
+import config from './config';
 
 /**
  * @class       Canvas
@@ -10,26 +11,25 @@ import Sprite from './Sprite';
  */
 export default class Canvas {
     /**
-     * @param {object} deps
-     * @param {object} deps.config
+     * @param {object} [deps]
      * @param {object} [deps.document]
      * @param {object} [deps.window]
      */
     constructor(deps) {
-        this._config = deps.config;
+        deps = deps || {};
         this._document = deps.document || document;
         this._window = deps.window || window;
 
         this._canvas = this._document.createElement('canvas');
         this._context = this._canvas.getContext('2d');
 
-        this._canvas.width = this._config.viewportWidth * this._config.ppp;
-        this._canvas.height = this._config.viewportHeight * this._config.ppp;
+        this._canvas.width = config.viewportWidth * config.ppp;
+        this._canvas.height = config.viewportHeight * config.ppp;
         this._canvas.style.position = 'absolute';
-        this._canvas.style.backgroundColor = this._config.canvasBgColor;
+        this._canvas.style.backgroundColor = config.canvasBgColor;
 
-        this._config.parentEl.style.backgroundColor = this._config.parentElBgColor;
-        this._config.parentEl.appendChild(this._canvas);
+        config.parentEl.style.backgroundColor = config.parentElBgColor;
+        config.parentEl.appendChild(this._canvas);
 
         this._window.addEventListener('resize', this._handleResize.bind(this));
 
@@ -40,7 +40,6 @@ export default class Canvas {
      * adjust canvas MaintainMax to fit canvas to resized window
      */
     _handleResize() {
-        let config = this._config;
         let { top, left, width, height } = MaintainMax.fit(
             config.viewportWidth * config.ppp,
             config.viewportHeight * config.ppp
@@ -63,7 +62,7 @@ export default class Canvas {
      * @param  {String}  color [description]
      */
     _renderPicl(x, y, color) {
-        let ppp = this._config.ppp;
+        let ppp = config.ppp;
 
         this._context.fillStyle = color;
         this._context.fillRect(x * ppp, y * ppp, ppp, ppp);
@@ -74,7 +73,7 @@ export default class Canvas {
      * adjust the canvas based on the Sprite's attrs
      */
     _setSpriteContext(sprite) {
-        let ppp = this._config.ppp;
+        let ppp = config.ppp;
 
         this._context.translate(sprite.getX() * ppp, sprite.getY() * ppp);
 
