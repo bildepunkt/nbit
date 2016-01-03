@@ -15,17 +15,26 @@ export default class Sprite {
         this._rotation = 0;
         this._composite = Sprite._compositeDefault;
         this._opacity = 1;
+        this._isDraggable = true;
     }
 
     static getCompositeDefault() {
         return Sprite._compositeDefault;
     }
 
+    //
+    // getters/setters
+    //
+
     /**
      * @return {String}
      */
     getComposite() {
         return this._composite;
+    }
+
+    getIsDraggable() {
+        return this._isDraggable;
     }
 
     /**

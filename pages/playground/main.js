@@ -1,13 +1,15 @@
 import config from '../../src/config';
 import Canvas from '../../src/Canvas';
-import Point from '../../src/Point';
-import Bitmap from '../../src/Bitmap';
 import Collision from '../../src/Collision';
 import Collection from '../../src/lib/Collection';
 import CanvasInput from '../../src/lib/CanvasInput';
+import Ticker from '../../src/Ticker';
+import Point from '../../src/Point';
+import Bitmap from '../../src/Bitmap';
 import Line from '../../src/Line';
 
 let canvas = new Canvas();
+let ticker = new Ticker().start();
 
 let canvasInput = new CanvasInput({
     useMouse: config.useMouse,
@@ -29,12 +31,12 @@ let line = new Line().setPoints(
 );
 
 let pool = new Collection().addItems(
-    bitmap
+    bitmap, line
 );
 
-canvasInput.setEntityPool(pool);
+canvasInput.setEntityPool(pool.getArray());
+canvasInput.press = (e)=> console.log(e);
 
-canvas.render(line);
-canvas.render(bitmap);
-
-canvasInput.press = (e) => console.log(e);
+ticker.update = ()=> {
+    canvas.renderPool(pool.getArray());
+};

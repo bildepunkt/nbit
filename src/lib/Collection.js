@@ -70,4 +70,10 @@ export default class Collection {
             }
         }
     }
+
+    getArray() {
+        return this._items.map((item) => {
+            return item.item;
+        });
+    }
 }

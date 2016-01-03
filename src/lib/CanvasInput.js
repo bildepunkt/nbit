@@ -12,7 +12,7 @@ export default class CanvasInput {
      * @param {Function}   options.hitTestMethod the method for checking pointer events
      *                                           against entities in the entityPool. Should
      *                                           be a static method as not called in scope
-     * @param {Object[]}   options.entityPool    an array of entities (currently only supports type Collection)
+     * @param {Object[]}   options.entityPool    an array of entities
      * @param {Boolean}    options.canvasFit     Set to true if using css to fit the canvas in the viewport
      * @param {Boolean}    options.useKeyboard   whether or not to listen for keyboard events
      * @param {Boolean}    options.useMouse      whether or not to listen for mouse events
@@ -106,7 +106,7 @@ export default class CanvasInput {
             case 'mousedown':
             case 'touchstart':
                 this._pressCandidate = eventData.target;
-                this._dragCandidate = eventData.target && eventData.target.draggable() ? eventData.target : undefined;
+                this._dragCandidate = eventData.target && eventData.target.getIsDraggable() ? eventData.target : undefined;
 
                 if (this._dragCandidate) {
                     this._dragCandidateOffsetX = eventData.x - this._dragCandidate.getY();
@@ -139,7 +139,7 @@ export default class CanvasInput {
             break;*/
             case 'mousemove':
             case 'touchmove':
-                if (this._canDrag && this._dragCandidate && this._dragCandidate.isDraggable()) {
+                if (this._canDrag && this._dragCandidate && this._dragCandidate.getIsDraggable()) {
 
                     this._dragCandidate.setX(eventData.x - this._dragCandidateOffsetX);
                     this._dragCandidate.setY(eventData.y - this._dragCandidateOffsetY);
@@ -179,14 +179,12 @@ export default class CanvasInput {
     _getEventTarget(event) {
         let topmostEntity;
 
-        // check if entityPool exists and is of type Collection
-        if (this._entityPool && this._entityPool.each) {
-            this._entityPool.each(function(entity) {
-                if (this._hitTestMethod(event.x, event.y, entity)) {
-                    // continually assign higher sorted entity
-                    topmostEntity = entity;
-                }
-            }, this);
+        for (let entity of this._entityPool) {
+            if (typeof entity.getBoundingBox === 'function' &&
+                this._hitTestMethod(event.x, event.y, entity)) {
+                // continually assign higher sorted entity
+                topmostEntity = entity;
+            }
         }
 
         return topmostEntity;

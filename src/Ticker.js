@@ -5,11 +5,10 @@
  */
 export default class Ticker {
     /**
-     * [constructor description]
-     * @param  {[type]} deps [description]
-     * @return {[type]}      [description]
+     * @param {Object} [deps] optional document and window dependancy injection for testing
      */
     constructor(deps) {
+        deps = deps || {};
         this._document = deps.document || document;
         this._window = deps.window || window;
 
@@ -61,6 +60,8 @@ export default class Ticker {
      */
     start() {
         this._update();
+
+        return this;
     }
 
     /**

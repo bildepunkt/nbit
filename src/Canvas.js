@@ -104,21 +104,27 @@ export default class Canvas {
     onResize() {}
 
     /**
-     * collects object's Picls and renders them to canvas
+     * collects entity's Picls and renders them to canvas
      *
-     * @param {Object} object Any nbit object
+     * @param {Object} entity Any nbit entity
      */
-    render(object) {
-        let picls = object.render();
+    render(entity) {
+        let picls = entity.render();
 
         this._context.save();
 
-        if (object instanceof Sprite) {
-            this._setSpriteContext(object);
+        if (entity instanceof Sprite) {
+            this._setSpriteContext(entity);
         }
 
         for (let picl of picls) {
             this._renderPicl(picl.x, picl.y, picl.color);
+        }
+    }
+
+    renderPool(pool) {
+        for (let entity of pool) {
+            this.render(entity);
         }
     }
 }
