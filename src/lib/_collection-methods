@@ -1,0 +1,192 @@
+
+    // TODO below needs refactoring
+
+
+    /**
+     * removes -by name- an object from the collection's items
+     *
+     * @method SW.Collection.prototype.removeItem
+     * @param {String} name
+     */
+    removeItem(name) {
+        this._rawEach(function(iterItem, i, iterName, items) {
+            if (name === iterName) {
+                iterItem = null;
+                items.splice(i, 1);
+
+                // break out of loop
+                return false;
+            }
+        });
+    }
+
+    /**
+     * removes all items from collection
+     *
+     * @method SW.Collection.prototype.removeAllItems
+     * @return {SW.Collection}
+     * @chainable
+     */
+    removeAllItems() {
+        this._items = [];
+
+        return this;
+    }
+
+    /**
+     * iterates the collection's sortedItems. The raw item, index, name, and the list being iterated are supplied to the provided function
+     *
+     * @method SW.Collection.prototype._rawEach
+     * @param {function} fn
+     * @private
+     */
+    _rawEach(fn) {
+        for(var i = 0, len = this._items.length; i < len; i += 1) {
+            if (fn(this._items[i], i, this._items[i].name, this._items) === false) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * iterates items and return the ones that meet criteria
+     *
+     * @method SW.Collection.prototype.filter
+     * @param {function} fn
+     * @return {Array} filteredItems
+     */
+    filter(fn, scope) {
+        var filteredItems = [];
+        var filteredItem;
+
+        this.each(function(item, i, name) {
+            filteredItem = fn(item, i, name);
+            if (filteredItem) {
+                filteredItems.push(filteredItem);
+            }
+        }, scope);
+
+        return filteredItems;
+    }
+
+    /**
+     * gets the count of items in collection
+     *
+     * @method SW.Collection.prototype.getItemCount
+     * @return {Integer}
+     */
+    getItemCount() {
+        return this._items.length;
+    }
+
+    /**
+     * alters an existing item
+     *
+     * @method SW.Collection.prototype.setItem
+     * @param {String} name
+     * @param {any} value
+     * @chainable
+     */
+    setItem(name, value) {
+        this._rawEach(function(iterItem, i, iterName) {
+            if (name === iterName) {
+                iterItem.value = value;
+
+                return false;
+            }
+        });
+
+        return this;
+    }
+
+    /**
+     * gets an existing item by name
+     *
+     * @method SW.Collection.prototype.getItem
+     * @return {any}
+     */
+    getItem(name) {
+        var item;
+
+        this.each(function(iterItem, i, iterName) {
+            if (name === iterName) {
+                item = iterItem;
+
+                return false;
+            }
+        });
+
+        return item;
+    }
+
+    /**
+     * gets an existing item by name index
+     *
+     * @method SW.Collection.prototype.getItem
+     * @return {any}
+     */
+    getItemAt(index) {
+        return this._items[index].value;
+    }
+
+    /**
+     * gets a raw item by name
+     *
+     * @method SW.Collection.prototype._getRawItem
+     * @return {any}
+     * @private
+     */
+    _getRawItem(name) {
+        var item;
+
+        this._rawEach(function(iterItem, i, iterName) {
+            if (name === iterName) {
+                item = iterItem;
+
+                return false;
+            }
+        });
+
+        return item;
+    }
+
+    /**
+     * moves item to new index
+     *
+     * @method SW.Collection.prototype.setItemIndex
+     * @param {String} name
+     * @param {Integer} index
+     */
+    setItemIndex(name, index) {
+        var item;
+        var currentIndex = this.getItemIndex(name);
+
+        if (index === currentIndex) {
+            return;
+        }
+
+        item = this._getRawItem(name);
+        this.removeItem(name);
+        this._items.splice(index, 0, item);
+    }
+
+    /**
+     * gets an item's current index
+     *
+     * @method SW.Collection.prototype.getItemIndex
+     * @param {String} name
+     * @return {Integer}
+     */
+    getItemIndex(name) {
+        var index;
+
+        this.each(function(iterItem, i, iterName) {
+            if (name === iterName) {
+                index = i;
+
+                return false;
+            }
+        });
+
+        return index;
+    }

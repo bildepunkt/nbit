@@ -23,6 +23,15 @@ export default class Bitmap extends Sprite {
         return this;
     }
 
+    getBoundingBox() {
+        return {
+            left: this._x,
+            top: this._y,
+            right: this._x + this._maps[this._frame][0].length,
+            bottom: this._y + this._maps[this._frame].length
+        };
+    }
+
     render() {
         let map = this._maps[this._frame],
             picls = [],

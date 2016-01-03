@@ -17,6 +17,9 @@ export default class Config {
         this.parentEl = document.body;
         this.parentElBgColor = '#000';
         this.canvasBgColor = '#FFF';
+        this.useKeyboard = false;
+        this.useMouse = true;
+        this.useTouch = false;
 
         for (let key in options) {
             this[key] = options[key];

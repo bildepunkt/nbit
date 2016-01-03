@@ -1,6 +1,7 @@
 /**
  * @class       MaintainMax
  * @description Keeps canvas element centered and (with aspect ratio intact) in the viewport
+ * @author      Chris Peters
  */
 export default class MaintainMax {
     /**

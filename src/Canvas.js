@@ -50,6 +50,8 @@ export default class Canvas {
         this._canvas.style.left = `${Math.round(left)}px`;
         this._canvas.style.width = `${Math.round(width)}px`;
         this._canvas.style.height = `${Math.round(height)}px`;
+
+        this.onResize();
     }
 
     /**
@@ -61,10 +63,10 @@ export default class Canvas {
      * @param  {String}  color [description]
      */
     _renderPicl(x, y, color) {
-        let size = this._config.ppp;
+        let ppp = this._config.ppp;
 
         this._context.fillStyle = color;
-        this._context.fillRect(x * size, y * size, size, size);
+        this._context.fillRect(x * ppp, y * ppp, ppp, ppp);
         this._context.restore();
     }
 
@@ -72,9 +74,9 @@ export default class Canvas {
      * adjust the canvas based on the Sprite's attrs
      */
     _setSpriteContext(sprite) {
-        let size = this._config.ppp;
+        let ppp = this._config.ppp;
 
-        this._context.translate(sprite.getX() * size, sprite.getY() * size);
+        this._context.translate(sprite.getX() * ppp, sprite.getY() * ppp);
 
         this._context.scale(sprite.getScaleX(), sprite.getScaleY());
 
@@ -88,6 +90,19 @@ export default class Canvas {
             this._context.globalCompositeOperation = sprite.getComposite();
         }
     }
+
+    /**
+     * @return {HTMLEntity} canvas
+     */
+    getEl() {
+        return this._canvas;
+    }
+
+    /**
+     * window (and subsequently, canvas el) resize callback
+     * @return {[type]} [description]
+     */
+    onResize() {}
 
     /**
      * collects object's Picls and renders them to canvas
